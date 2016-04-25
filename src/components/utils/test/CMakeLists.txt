@@ -1,4 +1,4 @@
-# Copyright (c) 2015, Ford Motor Company
+# Copyright (c) 2016, Ford Motor Company
 # All rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -30,6 +30,15 @@
 
 if(BUILD_TESTS)
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  add_custom_target(copy_sqlite_lib ALL
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+	%SDL_SQLITE_DIR%/sqlite3.lib
+	${CMAKE_CURRENT_BINARY_DIR}/sqlite3.lib
+	#$(TargetDir)sqlite3.lib
+    COMMENT "Copying sqlite lib")
+endif()
+
 include_directories (
   ${JSONCPP_INCLUDE_DIRECTORY}
   ${CMAKE_SOURCE_DIR}/src/3rd_party-static/gmock-1.7.0/include
@@ -44,11 +53,9 @@ set(testSources
   messagemeter_test.cc
   file_system_test.cc
   date_time_test.cc
-  system_test.cc
   thread_validator_test.cc
   conditional_variable_test.cc
   message_queue_test.cc
-  resource_usage_test.cc
   bitstream_test.cc
   prioritized_queue_test.cc
   data_accessor_test.cc
@@ -62,9 +69,15 @@ set(testSources
   scope_guard_test.cc
   atomic_object_test.cc
   message_loop_thread_test.cc
-  custom_string_test.cc
-  timer_test.cc
 )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    list (APPEND testSources
+      system_test.cc
+      custom_string_test.cc
+      resource_usage_test.cc
+)
+endif()
 
 set(testLibraries
   gmock
@@ -95,8 +108,9 @@ else ()
   list (APPEND testLibraries sqlite3)
 endif()
 
+# no AutoTrace
 if (ENABLE_LOG)
-  list(APPEND testSources auto_trace_test.cc)
+#  #list(APPEND testSources auto_trace_test.cc)
   list(APPEND testSources log_message_loop_thread_test.cc)
 endif()
 
@@ -111,5 +125,14 @@ file(COPY smartDeviceLink.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 create_test("utils_test" "${testSources}" "${testLibraries}")
 
 add_subdirectory(test_generator)
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /FORCE" )
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099" )
+endif()  
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    add_dependencies(utils_test copy_sqlite_lib)
+endif()
 
 endif()
