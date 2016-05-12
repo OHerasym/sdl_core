@@ -35,6 +35,7 @@ find_package(LibUSBx REQUIRED)
 set(TM_TEST_DIR ${COMPONENTS_DIR}/transport_manager/test)
 
 include_directories(
+  ${COMPONENTS_DIR}
   include
   ${LOG4CXX_INCLUDE_DIRECTORY}
   ${GMOCK_INCLUDE_DIRECTORY}
@@ -48,7 +49,7 @@ include_directories(
 set(LIBRARIES
   gmock
   ConfigProfile
-  transport_manager
+  TransportManager
   Utils
   ConfigProfile
   ProtocolLibrary
@@ -65,12 +66,12 @@ if (BUILD_BT_SUPPORT)
 endif()
 
 set(SOURCES
-  ${TM_TEST_DIR}/transport_manager_default_test.cc
-  ${TM_TEST_DIR}/transport_manager_impl_test.cc
-  ${TM_TEST_DIR}/transport_adapter_test.cc
-  ${TM_TEST_DIR}/transport_adapter_listener_test.cc
-  ${TM_TEST_DIR}/tcp_transport_adapter_test.cc
-  ${TM_TEST_DIR}/tcp_device_test.cc
+  ${TM_TEST_DIR}/transport_manager_default_test.cc #done
+  ${TM_TEST_DIR}/transport_manager_impl_test.cc #done
+  ${TM_TEST_DIR}/transport_adapter_test.cc #done
+  ${TM_TEST_DIR}/transport_adapter_listener_test.cc #done
+  ${TM_TEST_DIR}/tcp_transport_adapter_test.cc #done
+  ${TM_TEST_DIR}/tcp_device_test.cc #done
   ${TM_TEST_DIR}/tcp_client_listener_test.cc
 )
 
