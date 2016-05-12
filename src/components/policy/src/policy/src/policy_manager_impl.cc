@@ -953,6 +953,7 @@ bool PolicyManagerImpl::ResetPT(const std::string& file_name) {
 
 bool PolicyManagerImpl::CheckAppStorageFolder() const {
   LOGGER_AUTO_TRACE(logger_);
+  std::cout << "CheckAppStorageFolder" << std::endl;
   const std::string app_storage_folder = get_settings().app_storage_folder();
   LOGGER_DEBUG(logger_, "AppStorageFolder " << app_storage_folder);
   if (!file_system::DirectoryExists(app_storage_folder)) {
@@ -974,10 +975,12 @@ bool PolicyManagerImpl::InitPT(const std::string& file_name,
                                const PolicySettings* settings) {
   LOGGER_AUTO_TRACE(logger_);
   settings_ = settings;
-  if (!CheckAppStorageFolder()) {
-    LOGGER_ERROR(logger_, "Can not read/write into AppStorageFolder");
-    return false;
-  }
+  std::cout << "InitPT" << std::endl;
+//  if (!CheckAppStorageFolder()) {
+//    LOGGER_ERROR(logger_, "Can not read/write into AppStorageFolder");
+//    return false;
+//  }
+
   const bool ret = cache_->Init(file_name, settings);
   if (ret) {
     RefreshRetrySequence();

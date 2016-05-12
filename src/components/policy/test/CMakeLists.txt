@@ -52,16 +52,21 @@ set(testLibraries
 )
 
 set(testSources
-  counter_test.cc
-  shared_library_test.cc
-  generated_code_test.cc
-  policy_manager_impl_test.cc
-  update_status_manager_test.cc
+  #counter_test.cc #done
+  #generated_code_test.cc #done
+  #policy_manager_impl_test.cc # done
+  #update_status_manager_test.cc #done
 )
 
   list (APPEND testSources
     sql_pt_representation_test.cc
   )
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    list (APPEND testSources
+      #shared_library_test.cc #done
+)
+endif()
 
 create_test("policy_test" "${testSources}" "${testLibraries}")
 
