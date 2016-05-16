@@ -63,7 +63,7 @@ endif()
 
 if (BUILD_BT_SUPPORT)
  if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
-  target_link_libraries(${target} Bthprops.lib)
+  list(APPEND LIBRARIES bluetooth)
  endif()
 endif()
 

@@ -30,8 +30,6 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define snprintf _snprintf
-
 #include "gtest/gtest.h"
 #include "transport_manager/tcp/tcp_transport_adapter.h"
 #include "transport_manager/transport_adapter/connection.h"
@@ -116,8 +114,11 @@ TEST_F(TcpAdapterTest, StoreDataWithSeveralDevicesAndOneApplication) {
   std::string uniq_id[count_dev];
   for (uint32_t i = 0; i < count_dev; i++) {
     char numb[12];
-    //std::snprintf(numb, 12, "%d", i);
-	_snprintf(numb, 12, "%d", i);
+    #ifdef __linux__
+    std::snprintf(numb, 12, "%d", i);
+    #else
+	  _snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     uniq_id[i] = "unique_device_name" + std::string(numb);
     mockdev[i] = new MockTCPDevice(host_address, uniq_id[i]);
     EXPECT_CALL(*(mockdev[i]), IsSameAs(_)).WillRepeatedly(Return(false));
@@ -173,8 +174,11 @@ TEST_F(TcpAdapterTest, StoreDataWithSeveralDevicesAndSeveralApplications) {
   std::string uniq_id[count_dev];
   for (uint32_t i = 0; i < count_dev; i++) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     uniq_id[i] = "unique_device_name" + std::string(numb);
     mockdev[i] = new MockTCPDevice(host_address, uniq_id[i]);
     EXPECT_CALL(*(mockdev[i]), IsSameAs(_)).WillRepeatedly(Return(false));
@@ -305,8 +309,11 @@ TEST_F(TcpAdapterTest, StoreDataWithSeveralDevices_RestoreData) {
   std::string uniq_id[count_dev];
   for (uint32_t i = 0; i < count_dev; i++) {
     char numb[12];
-    //std::snprintf(numb, 12, "%d", i);
-	_snprintf(numb, 12, "%d", i);
+    #ifdef __linux__
+    std::snprintf(numb, 12, "%d", i);
+    #else
+	  _snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     uniq_id[i] = "unique_device_name" + std::string(numb);
     mockdev[i] = new MockTCPDevice(host_address, uniq_id[i]);
     EXPECT_CALL(*(mockdev[i]), IsSameAs(_)).WillRepeatedly(Return(false));

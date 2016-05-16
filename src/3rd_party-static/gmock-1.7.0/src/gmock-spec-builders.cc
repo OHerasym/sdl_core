@@ -48,6 +48,7 @@
 # include <unistd.h>  // NOLINT
 #endif
 
+#ifndef __linux__
 #include <Windows.h>
 const __int64 DELTA_EPOCH_IN_MICROSECS = 11644473600000000;
 
@@ -130,6 +131,7 @@ void usleep(int waitTime) {
 		QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER*>(&time2));
 	} while ((time2 - time1) < waitTime);
 }
+#endif // __linux__
 
 namespace testing {
 namespace internal {

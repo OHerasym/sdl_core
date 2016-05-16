@@ -29,7 +29,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+#ifndef __linux__
 #include <WinSock2.h>
+#endif // __linux__
 #ifdef __QNXNTO__
 #include <openssl/ssl3.h>
 #else

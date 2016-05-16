@@ -148,8 +148,11 @@ void ResumptionDataTest::CheckChoiceSet(sm::SmartObject& res_list) {
       sm::SmartObject command = res_list[i][am::strings::choice_set][j];
       EXPECT_EQ(i + j, command[am::strings::choice_id].asUInt());
       char numb[12];
-	  _snprintf(numb, 12, "%d", i + j);
-      //std::snprintf(numb, 12, "%d", i + j);
+      #ifndef __linux__
+	    _snprintf(numb, 12, "%d", i + j);
+      #else
+      std::snprintf(numb, 12, "%d", i + j);
+      #endif // __linux__
       std::string test_choice =
           (*test_choiceset_map[i])[am::strings::choice_set][j]
                                   [am::strings::vr_commands][0].asString();
@@ -211,8 +214,11 @@ void ResumptionDataTest::CheckAppFiles(sm::SmartObject& res_list) {
 
   for (unsigned int i = 0; i < count_of_files; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     check_file = app_files_map_["test_file " + std::string(numb)];
     EXPECT_EQ(check_file.file_name,
               res_list[i][am::strings::sync_file_name].asString());
@@ -396,16 +402,22 @@ void ResumptionDataTest::SetHelpAndTimeoutPrompt() {
 
   for (unsigned int i = 0; i < tts_chunks_count + 3; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     help_prompt[i][am::strings::text] = "help prompt name" + std::string(numb);
     help_prompt[i][am::strings::type] = SpeechCapabilities::PRE_RECORDED;
   }
   help_prompt_ = new sm::SmartObject(help_prompt);
   for (unsigned int i = 0; i < tts_chunks_count; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     timeout_prompt[i][am::strings::text] = "timeout test" + std::string(numb);
     timeout_prompt[i][am::strings::type] = SpeechCapabilities::SC_TEXT;
   }
@@ -420,8 +432,11 @@ void ResumptionDataTest::SetVRHelpTitle() {
   sm::SmartObject vr_help;
   for (unsigned int i = 0; i < count_of_vrhelptitle; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     vr_help[i][am::strings::text] = "vr help " + std::string(numb);
     vr_help[i][am::strings::position] = i;
   }
@@ -437,8 +452,11 @@ void ResumptionDataTest::SetCommands() {
   sm::SmartObject sm_icon;
   for (uint32_t i = 0; i < count_of_commands; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     sm_comm[am::strings::cmd_id] = i;
     sm_comm[am::strings::menu_params][am::strings::position] = i;
     sm_comm[am::strings::menu_params][am::hmi_request::parent_id] = i;
@@ -447,8 +465,11 @@ void ResumptionDataTest::SetCommands() {
 
     for (uint32_t j = 0; j < count_of_choice; ++j) {
       char vr[12];
-	  _snprintf(numb, 12, "%d", i + j);
-      //std::snprintf(vr, 12, "%d", i + j);
+      #ifndef __linux__
+	    _snprintf(numb, 12, "%d", i + j);
+      #else
+      std::snprintf(vr, 12, "%d", i + j);
+      #endif // __linux__
       vr_commandsvector[j] = "VrCommand " + std::string(vr);
     }
     sm_comm[am::strings::vr_commands] = vr_commandsvector;
@@ -466,8 +487,11 @@ void ResumptionDataTest::SetSubmenues() {
   sm::SmartObject sm_comm;
   for (uint32_t i = 10; i < count_of_submenues + 10; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     sm_comm[am::strings::menu_id] = i;
     sm_comm[am::strings::position] = i;
     sm_comm[am::strings::menu_name] = "SubMenu" + std::string(numb);
@@ -486,8 +510,11 @@ void ResumptionDataTest::SetChoiceSet() {
   for (uint32_t i = 0; i < count_of_choice_sets; ++i) {
     for (uint32_t j = 0; j < count_of_choice; ++j) {
       char numb[12];
-	  (numb, 12, "%d", i + j);
-      //std::snprintf(numb, 12, "%d", i + j);
+      #ifndef __linux__
+	    _snprintf(numb, 12, "%d", i + j);
+      #else
+      std::snprintf(numb, 12, "%d", i + j);
+      #endif // __linux__
 
       choice[am::strings::choice_id] = i + j;
       vr_commandsvector[0] = "ChoiceSet VrCommand " + std::string(numb);
@@ -523,8 +550,11 @@ void ResumptionDataTest::SetAppFiles() {
   int file_types;
   for (unsigned int i = 0; i < count_of_files; ++i) {
     char numb[12];
-	_snprintf(numb, 12, "%d", i);
-    //std::snprintf(numb, 12, "%d", i);
+    #ifndef __linux__
+	  _snprintf(numb, 12, "%d", i);
+    #else
+    std::snprintf(numb, 12, "%d", i);
+    #endif // __linux__
     file_types = i;
     test_file.is_persistent = true;
     test_file.is_download_complete = true;

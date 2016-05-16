@@ -36,7 +36,9 @@
 using ::utils::dbms::SQLError;
 using ::utils::dbms::SQLDatabase;
 
+#ifndef __linux__
 #define S_IRUSR 0400
+#endif // __linux__
 
 namespace test {
 namespace components {
