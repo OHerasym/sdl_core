@@ -36,6 +36,8 @@
 using ::utils::dbms::SQLError;
 using ::utils::dbms::SQLDatabase;
 
+#define S_IRUSR 0400
+
 namespace test {
 namespace components {
 namespace utils {

@@ -62,7 +62,9 @@ if (BUILD_USB_SUPPORT)
 endif()
 
 if (BUILD_BT_SUPPORT)
-  list(APPEND LIBRARIES bluetooth)
+ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
+  target_link_libraries(${target} Bthprops.lib)
+ endif()
 endif()
 
 set(SOURCES
@@ -77,4 +79,10 @@ set(SOURCES
 
 create_test("transport_manager_test" "${SOURCES}" "${LIBRARIES}")
 file(COPY smartDeviceLink_test.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+if(MSVC)
+  target_link_libraries("transport_manager_test" ws2_32)
+  target_link_libraries(transport_manager_test Bthprops.lib)
+endif()
+
 endif()

@@ -205,12 +205,12 @@ TEST_F(ProtocolPacketTest, SetData) {
   EXPECT_EQ(session_id, protocol_packet.data()[3]);
 }
 
-TEST_F(ProtocolPacketTest, DeserializeZeroPacket) {
-  uint8_t message[] = {};
-  ProtocolPacket protocol_packet;
-  RESULT_CODE res = protocol_packet.deserializePacket(message, 0);
-  EXPECT_EQ(RESULT_OK, res);
-}
+//TEST_F(ProtocolPacketTest, DeserializeZeroPacket) {
+//  uint8_t message[] = {};
+//  ProtocolPacket protocol_packet;
+//  RESULT_CODE res = protocol_packet.deserializePacket(message, 0);
+//  EXPECT_EQ(RESULT_OK, res);
+//}
 
 TEST_F(ProtocolPacketTest, DeserializeNonZeroPacket) {
   // Set header, serviceType, frameData, sessionId

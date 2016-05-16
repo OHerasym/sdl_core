@@ -72,13 +72,13 @@ MessageTypeMap create_map() {
 MessageTypeMap message_types_map = create_map();
 #endif  // SDL_CPP11
 
-//std::string GetMessageType(const MessageType message_type) {
-//  MessageTypeMap::const_iterator it = message_types_map.find(message_type);
-//  if (message_types_map.end() != it) {
-//    return (*it).second;
-//  }
-//  return std::string();
-//}
+std::string GetMessageType(const MessageType message_type) {
+  MessageTypeMap::const_iterator it = message_types_map.find(message_type);
+  if (message_types_map.end() != it) {
+    return (*it).second;
+  }
+  return std::string();
+}
 
 }  // namespace
 CREATE_LOGGERPTR_GLOBAL(logger_, "ApplicationManager")

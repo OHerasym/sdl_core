@@ -19,7 +19,7 @@ class UpdateStatusManager {
   /**
    * @brief Constructor
    */
-  UpdateStatusManager();
+	 UpdateStatusManager();
 
   ~UpdateStatusManager();
 

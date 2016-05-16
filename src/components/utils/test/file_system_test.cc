@@ -1077,18 +1077,18 @@ TEST(FileSystemTest, GetAvailableDiskSpace) {
 #ifndef QT_PORT
 
 TEST(FileSystemTest, CreateFileCheckDefaultAccess) {
-	// File creation
-	ASSERT_FALSE(FileExists("./test file"));
-	EXPECT_TRUE(CreateFile("./test file"));
+  // File creation
+  ASSERT_FALSE(FileExists("./test file"));
+  EXPECT_TRUE(CreateFile("./test file"));
 
-	// Check accesses
-  EXPECT_TRUE(IsAccessible("./test file", R_OK));
-  EXPECT_TRUE(IsAccessible("./test file", W_OK));
-	EXPECT_TRUE(IsReadingAllowed("./test file"));
-	EXPECT_TRUE(IsWritingAllowed("./test file"));
+  // Check accesses
+  EXPECT_TRUE(IsAccessible("./test file", 4 || 6));
+  EXPECT_TRUE(IsAccessible("./test file", 2 || 6));
+  EXPECT_TRUE(IsReadingAllowed("./test file"));
+  EXPECT_TRUE(IsWritingAllowed("./test file"));
 
-	EXPECT_TRUE(DeleteFile("./test file"));
-	EXPECT_FALSE(FileExists("./test file"));
+  EXPECT_TRUE(DeleteFile("./test file"));
+  EXPECT_FALSE(FileExists("./test file"));
 }
 
 TEST(FileSystemTest, ConvertPathForURL) {

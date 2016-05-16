@@ -47,6 +47,7 @@ include_directories (
   ${COMPONENTS_DIR}/include/utils
   ${COMPONENTS_DIR}/rpc_base/include
   ${COMPONENTS_DIR}/utils/test/include
+  $ENV{SDL_SQLITE_DIR}
 )
 
 set(testSources

@@ -55,6 +55,8 @@ using ::testing::ReturnRef;
 using protocol_handler::ServiceType;
 
 class MediaManagerImplTest : public ::testing::Test {
+public:
+	MediaManagerImplTest(){}
  protected:
   const ::testing::NiceMock<MockMediaManagerSettings>
       mock_media_manager_settings_;
