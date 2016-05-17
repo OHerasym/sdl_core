@@ -76,9 +76,7 @@ SQLPTRepresentation::SQLPTRepresentation(const std::string& app_storage_folder,
 #if defined(__QNX__)
     : db_(new utils::dbms::SQLDatabase(kDatabaseName)
 #else
-    : db_(new utils::dbms::SQLDatabase(
-          file_system::ConcatPath(app_storage_folder, kDatabaseName),
-          "PolicyDatabase"))
+    : db_(new utils::dbms::SQLDatabase("777", "PolicyDatabase"))
 #endif
 {}
 
@@ -363,12 +361,15 @@ InitResult SQLPTRepresentation::Init(const PolicySettings *settings) {
                        << attempts << " attempts with "
                        << open_attempt_timeout_ms
                        << " open timeout(ms) for each.");
+      std::cout << "Open retry sequence failed. Tried" << std::endl;
       return InitResult::FAIL;
     }
   }
 #ifndef __QNX__
   if (!db_->IsReadWrite()) {
     LOGGER_ERROR(logger_, "There are no read/write permissions for database");
+    std::cout << "There are no read/write permissions for database"
+              << std::endl;
     return InitResult::FAIL;
   }
 
@@ -403,6 +404,8 @@ InitResult SQLPTRepresentation::Init(const PolicySettings *settings) {
             LOGGER_ERROR(logger_,
                          "Existing policy table representation is invlaid.");
             // TODO(PV): add handle
+            std::cout << "Existing policy table representation is invlaid."
+                      << std::endl;
             return InitResult::FAIL;
           }
         }

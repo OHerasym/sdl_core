@@ -29,7 +29,9 @@
  * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
-
+#ifndef __linux__
+#include <WinSock2.h>
+#endif
 #include "gtest/gtest.h"
 #include <fstream>
 #include <sstream>
@@ -152,6 +154,7 @@ class SSLTest : public testing::Test {
     EXPECT_CALL(*mock_crypto_manager_settings_, security_manager_mode())
         .WillRepeatedly(Return(security_manager::SERVER));
     server_ctx = crypto_manager_->CreateSSLContext();
+
     EXPECT_CALL(*mock_client_manager_settings_, security_manager_mode())
         .Times(2)
         .WillRepeatedly(Return(security_manager::CLIENT));
@@ -172,8 +175,8 @@ class SSLTest : public testing::Test {
   }
 
   void TearDown() OVERRIDE {
-    crypto_manager_->ReleaseSSLContext(server_ctx);
-    client_manager_->ReleaseSSLContext(client_ctx);
+    // crypto_manager_->ReleaseSSLContext(server_ctx);
+    // client_manager_->ReleaseSSLContext(client_ctx);
 
     delete crypto_manager_;
     delete client_manager_;
@@ -251,8 +254,8 @@ class SSLTestParam : public testing::TestWithParam<ProtocolAndCipher> {
   }
 
   void TearDown() OVERRIDE {
-    crypto_manager->ReleaseSSLContext(server_ctx);
-    client_manager->ReleaseSSLContext(client_ctx);
+    // crypto_manager->ReleaseSSLContext(server_ctx);
+    // client_manager->ReleaseSSLContext(client_ctx);
 
     delete crypto_manager;
     delete client_manager;

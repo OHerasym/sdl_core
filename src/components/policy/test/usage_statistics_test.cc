@@ -30,7 +30,7 @@
  */
 #include "gtest/gtest.h"
 
-#include "mock_statistics_manager.h"
+//#include "mock_statistics_manager.h"
 #include "usage_statistics/counter.h"
 
 using ::testing::StrictMock;

@@ -216,6 +216,7 @@ bool CryptoManagerImpl::Init() {
   LOGGER_DEBUG(logger_,
                "Setting up peer verification in mode: " << verify_mode);
   SSL_CTX_set_verify(context_, verify_mode, &debug_callback);
+  // std:: cout << context_->mode << std::endl;
   return true;
 }
 
