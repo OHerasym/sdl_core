@@ -1,76 +1,80 @@
-#Copyright(c)2015, Ford Motor Company
-#All rights reserved.
+# Copyright (c) 2015, Ford Motor Company
+# All rights reserved.
 #
-#Redistribution and use in source and binary forms, with or without
-#modification, are permitted provided that the following conditions are met:
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
 #
-#Redistributions of source code must retain the above copyright notice, this
-#list of conditions and the following disclaimer.
+# Redistributions of source code must retain the above copyright notice, this
+# list of conditions and the following disclaimer.
 #
-#Redistributions in binary form must reproduce the above copyright notice,
-#this list of conditions and the following
-#disclaimer in the documentation and / or other materials provided with the
-#distribution.
+# Redistributions in binary form must reproduce the above copyright notice,
+# this list of conditions and the following
+# disclaimer in the documentation and/or other materials provided with the
+# distribution.
 #
-#Neither the name of the Ford Motor Company nor the names of its contributors
-#may be used to endorse or promote products derived from this software
-#without specific prior written permission.
+# Neither the name of the Ford Motor Company nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
 #
-#THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-#AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-#IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-#ARE DISCLAIMED.IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
-#LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-#CONSEQUENTIAL DAMAGES(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-#SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-#INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-#CONTRACT, STRICT LIABILITY, OR TORT(INCLUDING NEGLIGENCE OR OTHERWISE)
-#ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-#POSSIBILITY OF SUCH DAMAGE.
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE
+# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+# POSSIBILITY OF SUCH DAMAGE.
 
-if (BUILD_TESTS)
+if(BUILD_TESTS)
 
-set(appMain_DIR ${CMAKE_SOURCE_DIR} / src / appMain)
+set(appMain_DIR ${CMAKE_SOURCE_DIR}/src/appMain)
 
-    include_directories($ { GMOCK_INCLUDE_DIRECTORY } ${COMPONENTS_DIR} /
-                        connection_handler / include ${COMPONENTS_DIR} /
-                        security_manager / test / include ${COMPONENTS_DIR} /
-                        protocol_handler / test / include ${COMPONENTS_DIR} /
-                        security_manager / include ${COMPONENTS_DIR} /
-                        application_manager / include ${COMPONENTS_DIR} /
-                        connection_handler / test / include ${COMPONENTS_DIR} /
-                        transport_manager / test / include ${COMPONENTS_DIR} /
-                        resumption / include ${JSONCPP_INCLUDE_DIRECTORY})
+include_directories(
+    ${GMOCK_INCLUDE_DIRECTORY}
+    ${COMPONENTS_DIR}/connection_handler/include
+    ${COMPONENTS_DIR}/security_manager/test/include
+    ${COMPONENTS_DIR}/protocol_handler/test/include
+    ${COMPONENTS_DIR}/security_manager/include
+    ${COMPONENTS_DIR}/application_manager/include
+    ${COMPONENTS_DIR}/connection_handler/test/include
+    ${COMPONENTS_DIR}/transport_manager/test/include
+    ${COMPONENTS_DIR}/resumption/include
+    ${JSONCPP_INCLUDE_DIRECTORY}
+)
 
-        set(LIBRARIES gmock connectionHandler ConfigProfile ProtocolHandler
-                TransportManager)
+set(LIBRARIES
+    gmock
+    connectionHandler
+    ConfigProfile
+    ProtocolHandler
+    TransportManager
+)
 
-            set(SOURCES connection_handler_impl_test.cc connection_test
-                    .cc device_test.cc heart_beat_monitor_test.cc)
+set(SOURCES
+    connection_handler_impl_test.cc
+    connection_test.cc
+    device_test.cc
+    heart_beat_monitor_test.cc
+)
 
-                if ($ { CMAKE_SYSTEM_NAME } MATCHES "Windows") set(
-                    CMAKE_EXE_LINKER_FLAGS
-                    "${CMAKE_EXE_LINKER_FLAGS} /FORCE") set(CMAKE_EXE_LINKER_FLAGS
-                                                            "${CMAKE_EXE_"
-                                                            "LINKER_FLAGS} "
-                                                            "/IGNORE:4099") endif()
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /FORCE" )
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099" )
+endif()  
 
-                    file(COPY ${appMain_DIR} /
-                         smartDeviceLink.ini DESTINATION "./")
+file(COPY ${appMain_DIR}/smartDeviceLink.ini DESTINATION "./")
 
-                        if (QT_PORT) link_directories(${CMAKE_SOURCE_DIR} /
-                                                      build / openssl_win_x86 /
-                                                      lib) endif()
+if(QT_PORT)
+  link_directories (${CMAKE_SOURCE_DIR}/build/openssl_win_x86/lib)
+endif()
 
-                            if (NOT QT_PORT AND $ { CMAKE_SYSTEM_NAME } MATCHES
-                                "Windows")
-                                link_directories(
-                                    ${CMAKE_SOURCE_DIR} / build / openssl_win_x64 / lib / )
-                                    endif()
+if(NOT QT_PORT AND ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  link_directories(${CMAKE_SOURCE_DIR}/build/openssl_win_x64/lib/)
+endif()
 
-                                        create_test(
-                                            "connection_handler_test"
-                                            "${SOURCES}"
-                                            "${LIBRARIES}")
+create_test("connection_handler_test" "${SOURCES}" "${LIBRARIES}")
 
-                                            endif()
+endif()

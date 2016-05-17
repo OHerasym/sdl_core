@@ -48,7 +48,7 @@ include_directories(
 set(testLibraries
   gmock
   Utils
-  Policy
+  PolicyTestLib
   UsageStatistics
 )
 
@@ -56,7 +56,7 @@ set(testSources
   counter_test.cc #done
   generated_code_test.cc #done
   policy_manager_impl_test.cc # done
-  #update_status_manager_test.cc #done
+  update_status_manager_test.cc #done
 )
 
   list (APPEND testSources
@@ -74,6 +74,7 @@ if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
 endif()
 
 create_test("policy_test" "${testSources}" "${testLibraries}")
+add_dependencies("policy_test" PolicyTestLib)
 
 file(COPY valid_sdl_pt_update.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sdl_preloaded_pt.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
