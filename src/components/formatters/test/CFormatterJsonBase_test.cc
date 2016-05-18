@@ -32,7 +32,6 @@
 
 #include <string>
 #include <algorithm>
-#include <assert.h>
 #include "json/value.h"
 #include "gtest/gtest.h"
 #include "json/reader.h"
@@ -233,7 +232,7 @@ TEST(CFormatterJsonBaseTest, JSonObjectValueToSmartObj_ExpectSuccessful) {
     EXPECT_EQ(*it, *it1);
     ++it1;
   }
-  assert(it == mems.end() && it1 == keys.end());
+  EXPECT_TRUE(it == mems.end() && it1 == keys.end());
 }
 
 TEST(CFormatterJsonBaseTest, StringSmartObjectToJSon_ExpectSuccessful) {
@@ -392,7 +391,7 @@ TEST(CFormatterJsonBaseTest, JSonObjectValueToObj_ExpectSuccessful) {
     EXPECT_EQ(*it, *it1);
     ++it1;
   }
-  assert(it == mems.end() && it1 == keys.end());
+  EXPECT_TRUE(it == mems.end() && it1 == keys.end());
 }
 
 }  // namespace formatters
