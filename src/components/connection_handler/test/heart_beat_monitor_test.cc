@@ -44,6 +44,19 @@ const int32_t MICROSECONDS_IN_MILLISECONDS = 1000;
 const int32_t MICROSECONDS_IN_SECOND = 1000 * 1000;
 }
 
+#ifndef __linux__
+void usleep(int waitTime) {
+  __int64 time1 = 0, time2 = 0, freq = 0;
+
+  QueryPerformanceCounter((LARGE_INTEGER*)&time1);
+  QueryPerformanceFrequency((LARGE_INTEGER*)&freq);
+
+  do {
+    QueryPerformanceCounter((LARGE_INTEGER*)&time2);
+  } while ((time2 - time1) < waitTime);
+}
+#endif  // __linux__
+
 namespace test {
 namespace components {
 namespace connection_handler_test {

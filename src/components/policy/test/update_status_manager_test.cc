@@ -32,10 +32,13 @@
 
 #include "gtest/gtest.h"
 #include "mock_policy_listener.h"
-#include "policy/policy_manager_impl.h"
+//#include "policy/policy_manager_impl.h"
 #include "policy/update_status_manager.h"
+#include "utils/shared_library.h"
 
 using ::policy::MockPolicyListener;
+
+// utils::SharedLibrary policy_library_("Policy");
 
 namespace test {
 namespace components {
@@ -64,6 +67,7 @@ class UpdateStatusManagerTest : public ::testing::Test {
 TEST_F(UpdateStatusManagerTest,
        StringifiedUpdateStatus_SetStatuses_ExpectCorrectStringifiedStatuses) {
   // Arrange
+  // if (policy_library_.IsLoaded())
   manager_->OnPolicyInit(false);
   // Check
   EXPECT_EQ("UP_TO_DATE", manager_->StringifiedUpdateStatus());

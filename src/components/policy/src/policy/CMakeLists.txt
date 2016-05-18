@@ -28,6 +28,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
+
 set(target Policy)
 if (${CMAKE_SYSTEM_NAME} MATCHES "Windows")
   if(NOT QT_PORT)
@@ -39,6 +40,7 @@ endif()
 
 set(install_destination bin)
 set(copy_destination ${CMAKE_BINARY_DIR}/src/appMain)
+
 set(library_name ${CMAKE_SHARED_LIBRARY_PREFIX}${target}${CMAKE_SHARED_LIBRARY_SUFFIX})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
@@ -100,6 +102,12 @@ endif()
 
 add_library(${target} SHARED ${SOURCES} ${HEADERS})
 target_link_libraries(${target} ${LIBRARIES})
+
+if(BUILD_TESTS)
+  set(TestTarget PolicyTestLib)
+  add_library(${TestTarget} STATIC ${SOURCES} ${HEADERS})
+  target_link_libraries(${TestTarget} ${LIBRARIES})
+endif()
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
   if(ENABLE_LOG)

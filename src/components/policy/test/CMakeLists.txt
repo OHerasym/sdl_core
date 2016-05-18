@@ -42,28 +42,39 @@ include_directories(
   ${COMPONENTS_DIR}/policy/src/policy/policy_table/table_struct
   ${COMPONENTS_DIR}/policy/src/policy/policy_table/
   ${COMPONENTS_DIR}/policy/test/include/
+  $ENV{SDL_SQLITE_DIR}
 )
 
 set(testLibraries
   gmock
   Utils
-  Policy
+  PolicyTestLib
   UsageStatistics
 )
 
 set(testSources
-  counter_test.cc
-  shared_library_test.cc
-  generated_code_test.cc
-  policy_manager_impl_test.cc
-  update_status_manager_test.cc
+  #counter_test.cc #done
+  #generated_code_test.cc #done
+  policy_manager_impl_test.cc # done
+  #update_status_manager_test.cc #done
 )
 
   list (APPEND testSources
-    sql_pt_representation_test.cc
+    #sql_pt_representation_test.cc
   )
 
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+    list (APPEND testSources
+      shared_library_test.cc #done
+)
+endif()
+
+if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+    link_directories ($ENV{SDL_SQLITE_DIR})
+endif()
+
 create_test("policy_test" "${testSources}" "${testLibraries}")
+add_dependencies("policy_test" PolicyTestLib)
 
 file(COPY valid_sdl_pt_update.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 file(COPY sdl_preloaded_pt.json DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
