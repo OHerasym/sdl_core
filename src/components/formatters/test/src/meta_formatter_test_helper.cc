@@ -59,7 +59,6 @@ void CMetaFormatterTestHelper::TearDown() {
 
 void CMetaFormatterTestHelper::AnyObjectToJsonString(
     const SmartObject& obj, std::string& result_string) {
-  //Json::Value params(Json::objectValue);
   utils::json::JsonValue params(utils::json::ValueType::OBJECT_VALUE);
 
   SmartObject formattedObj(obj);
@@ -68,7 +67,6 @@ void CMetaFormatterTestHelper::AnyObjectToJsonString(
   CFormatterJsonBase::objToJsonValue(formattedObj, json_value_ref);
 
   result_string = params.ToJson(true);
-  //result_string = params.toStyledString();
 }
 
 //-----------------------------------------------------------

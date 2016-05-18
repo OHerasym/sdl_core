@@ -53,10 +53,10 @@ set(testLibraries
 )
 
 set(testSources
-  counter_test.cc #done
-  generated_code_test.cc #done
+  #counter_test.cc #done
+  #generated_code_test.cc #done
   policy_manager_impl_test.cc # done
-  update_status_manager_test.cc #done
+  #update_status_manager_test.cc #done
 )
 
   list (APPEND testSources
@@ -65,7 +65,7 @@ set(testSources
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
     list (APPEND testSources
-      #shared_library_test.cc #done
+      shared_library_test.cc #done
 )
 endif()
 

@@ -38,7 +38,7 @@
 
 using ::policy::MockPolicyListener;
 
-utils::SharedLibrary policy_library_("Policy");
+// utils::SharedLibrary policy_library_("Policy");
 
 namespace test {
 namespace components {
@@ -47,39 +47,39 @@ namespace policy {
 using namespace ::policy;
 
 class UpdateStatusManagerTest : public ::testing::Test {
-protected:
-	UpdateStatusManager* manager_;
-	PolicyTableStatus status_;
-	const uint32_t k_timeout_;
+ protected:
+  UpdateStatusManager* manager_;
+  PolicyTableStatus status_;
+  const uint32_t k_timeout_;
 
-public:
-	UpdateStatusManagerTest() : k_timeout_(1) {}
+ public:
+  UpdateStatusManagerTest() : k_timeout_(1) {}
 
-	void SetUp() {
-		manager_ = new UpdateStatusManager();
-	}
+  void SetUp() {
+    manager_ = new UpdateStatusManager();
+  }
 
-	void TearDown() OVERRIDE{
-		delete manager_;
-	}
+  void TearDown() OVERRIDE {
+    delete manager_;
+  }
 };
 
 TEST_F(UpdateStatusManagerTest,
        StringifiedUpdateStatus_SetStatuses_ExpectCorrectStringifiedStatuses) {
   // Arrange
-  if (policy_library_.IsLoaded())
-    manager_->OnPolicyInit(false);
+  // if (policy_library_.IsLoaded())
+  manager_->OnPolicyInit(false);
   // Check
-   EXPECT_EQ("UP_TO_DATE", manager_->StringifiedUpdateStatus());
-   manager_->OnPolicyInit(true);
+  EXPECT_EQ("UP_TO_DATE", manager_->StringifiedUpdateStatus());
+  manager_->OnPolicyInit(true);
   // Check
-   EXPECT_EQ("UPDATE_NEEDED", manager_->StringifiedUpdateStatus());
-   manager_->OnUpdateSentOut(k_timeout_);
+  EXPECT_EQ("UPDATE_NEEDED", manager_->StringifiedUpdateStatus());
+  manager_->OnUpdateSentOut(k_timeout_);
   // Check
-   EXPECT_EQ("UPDATING", manager_->StringifiedUpdateStatus());
+  EXPECT_EQ("UPDATING", manager_->StringifiedUpdateStatus());
 }
 
- TEST_F(UpdateStatusManagerTest,
+TEST_F(UpdateStatusManagerTest,
        OnAppSearchStartedCompleted_ExpectAppSearchCorrectStatus) {
   // Arrange
   manager_->OnAppsSearchStarted();

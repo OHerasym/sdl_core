@@ -133,37 +133,36 @@ TEST(FormatterJsonRPCTest, CorrectRPCv2Request_ToString_Success) {
 }
 
 // assert fails
-//TEST(FormatterJsonRPCTest, UpperBoundValuesInSystemRequest_ToString_Success)
-// {
-//  // Create SmartObject
-//  SmartObject obj;
-//  obj[S_PARAMS][S_FUNCTION_ID] =
-//      hmi_apis::FunctionID::BasicCommunication_OnSystemRequest;
-//  obj[S_PARAMS][S_MESSAGE_TYPE] = hmi_apis::messageType::notification;
-//  obj[S_PARAMS][S_PROTOCOL_VERSION] = 2;
-//  obj[S_PARAMS][S_PROTOCOL_TYPE] = 1;
-//  obj[S_PARAMS][S_CORRELATION_ID] = 4444;
-//  obj[S_MSG_PARAMS] = SmartObject(SmartType::SmartType_Map);
-//  obj[S_MSG_PARAMS]["requestType"] =
-//  hmi_apis::Common_RequestType::PROPRIETARY;
-//  obj[S_MSG_PARAMS]["fileName"] = "fileName";
-//  obj[S_MSG_PARAMS]["length"] = big_64int;
-//  obj[S_MSG_PARAMS]["offset"] = big_64int;
-//  // Attach Schema
-//
-//  hmi_apis::HMI_API factory;
-////  EXPECT_TRUE(factory.attachSchema(obj, false));
-//  EXPECT_EQ(Errors::OK, obj.validate());
-//  std::string result;
-//  // Convert SmartObject to Json string
-//  EXPECT_TRUE(FormatterJsonRpc::ToString(obj, result));
-//  CompactJson(result);
-//  const std::string json_string(
-//      "{\"jsonrpc\":\"2.0\",\"method\":\"BasicCommunication.OnSystemRequest\","
-//      "\"params\":{\"fileName\":\"fileName\",\"length\":100000000000,"
-//      "\"offset\":100000000000,\"requestType\":\"PROPRIETARY\"}}");
-//  EXPECT_EQ(json_string, result);
-//}
+TEST(FormatterJsonRPCTest,
+     DISABLED_UpperBoundValuesInSystemRequest_ToString_Success) {
+  // Create SmartObject
+  SmartObject obj;
+  obj[S_PARAMS][S_FUNCTION_ID] =
+      hmi_apis::FunctionID::BasicCommunication_OnSystemRequest;
+  obj[S_PARAMS][S_MESSAGE_TYPE] = hmi_apis::messageType::notification;
+  obj[S_PARAMS][S_PROTOCOL_VERSION] = 2;
+  obj[S_PARAMS][S_PROTOCOL_TYPE] = 1;
+  obj[S_PARAMS][S_CORRELATION_ID] = 4444;
+  obj[S_MSG_PARAMS] = SmartObject(SmartType::SmartType_Map);
+  obj[S_MSG_PARAMS]["requestType"] = hmi_apis::Common_RequestType::PROPRIETARY;
+  obj[S_MSG_PARAMS]["fileName"] = "fileName";
+  obj[S_MSG_PARAMS]["length"] = big_64int;
+  obj[S_MSG_PARAMS]["offset"] = big_64int;
+  // Attach Schema
+
+  hmi_apis::HMI_API factory;
+  //  EXPECT_TRUE(factory.attachSchema(obj, false));
+  EXPECT_EQ(Errors::OK, obj.validate());
+  std::string result;
+  // Convert SmartObject to Json string
+  EXPECT_TRUE(FormatterJsonRpc::ToString(obj, result));
+  CompactJson(result);
+  const std::string json_string(
+      "{\"jsonrpc\":\"2.0\",\"method\":\"BasicCommunication.OnSystemRequest\","
+      "\"params\":{\"fileName\":\"fileName\",\"length\":100000000000,"
+      "\"offset\":100000000000,\"requestType\":\"PROPRIETARY\"}}");
+  EXPECT_EQ(json_string, result);
+}
 
 TEST(FormatterJsonRPCTest, CorrectRPCv1Notification_ToString_Success) {
   // Create SmartObject
@@ -409,26 +408,27 @@ TEST(FormatterJsonRPCTest, ResponseToSmartObject_Success) {
 }
 
 // upper bound error
-//TEST(FormatterJsonRPCTest, StringWithUpperBoundValueToSmartObject_Success) {
-//  // Source Json string
-//  const std::string json_string(
-//      "{\"jsonrpc\":\"2.0\",\"method\":\"BasicCommunication.OnSystemRequest\","
-//      "\"params\":{\"fileName\":\"filename\",\"length\":100000000000,"
-//      "\"requestType\":\"PROPRIETARY\"}}");
-//  // Smart Object to keep result
-//  SmartObject obj;
-//  // Convert json string to smart object
+TEST(FormatterJsonRPCTest,
+     DISABLED_StringWithUpperBoundValueToSmartObject_Success) {
+  // Source Json string
+  const std::string json_string(
+      "{\"jsonrpc\":\"2.0\",\"method\":\"BasicCommunication.OnSystemRequest\","
+      "\"params\":{\"fileName\":\"filename\",\"length\":100000000000,"
+      "\"requestType\":\"PROPRIETARY\"}}");
+  // Smart Object to keep result
+  SmartObject obj;
+  // Convert json string to smart object
 
-//  int32_t res = FormatterJsonRpc::FromString<hmi_apis::FunctionID::eType,
-//                                             hmi_apis::messageType::eType>(
-//      json_string, obj);
-//  // Get keys collection from Smart Object
-//  EXPECT_EQ(0, res);
-//  EXPECT_EQ(big_64int, obj["msg_params"]["length"].asInt());
-//  EXPECT_EQ(str_with_big_int64, obj["msg_params"]["length"].asString());
-//  std::set<std::string> keys = obj["params"].enumerate();
-//  EXPECT_EQ(4u, keys.size());
-//}
+  int32_t res = FormatterJsonRpc::FromString<hmi_apis::FunctionID::eType,
+                                             hmi_apis::messageType::eType>(
+      json_string, obj);
+  // Get keys collection from Smart Object
+  EXPECT_EQ(0, res);
+  EXPECT_EQ(big_64int, obj["msg_params"]["length"].asInt());
+  EXPECT_EQ(str_with_big_int64, obj["msg_params"]["length"].asString());
+  std::set<std::string> keys = obj["params"].enumerate();
+  EXPECT_EQ(4u, keys.size());
+}
 
 }  // namespace formatters_test
 }  // namespace components
