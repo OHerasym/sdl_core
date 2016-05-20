@@ -62,6 +62,14 @@ set(SOURCES
 
 file(COPY ${appMain_DIR}/smartDeviceLink.ini DESTINATION "./")
 
+if(QT_PORT)
+  link_directories (${CMAKE_SOURCE_DIR}/build/openssl_win_x86/lib)
+endif()
+
+if(NOT QT_PORT AND ${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+  link_directories(${CMAKE_SOURCE_DIR}/build/openssl_win_x64/lib/)
+endif()
+
 create_test("connection_handler_test" "${SOURCES}" "${LIBRARIES}")
 
 endif()
