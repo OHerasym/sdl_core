@@ -60,11 +60,6 @@ set(SOURCES
     heart_beat_monitor_test.cc
 )
 
-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /FORCE" )
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099" )
-endif()
-
 file(COPY ${appMain_DIR}/smartDeviceLink.ini DESTINATION "./")
 
 if(QT_PORT)
