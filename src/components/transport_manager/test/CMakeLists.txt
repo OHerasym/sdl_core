@@ -35,11 +35,13 @@ find_package(LibUSBx REQUIRED)
 set(TM_TEST_DIR ${COMPONENTS_DIR}/transport_manager/test)
 
 include_directories(
+  ${COMPONENTS_DIR}
   include
   ${LOG4CXX_INCLUDE_DIRECTORY}
   ${GMOCK_INCLUDE_DIRECTORY}
   ${COMPONENTS_DIR}/smart_objects/include
   ${COMPONENTS_DIR}/transport_manager/include
+  ${COMPONENTS_DIR}/transport_manager/test/include/
   ${COMPONENTS_DIR}/utils/include
   ${COMPONENTS_DIR}/connection_handler/include
   ${JSONCPP_INCLUDE_DIRECTORY}
@@ -48,7 +50,7 @@ include_directories(
 set(LIBRARIES
   gmock
   ConfigProfile
-  transport_manager
+  TransportManager
   Utils
   ConfigProfile
   ProtocolLibrary
@@ -61,7 +63,9 @@ if (BUILD_USB_SUPPORT)
 endif()
 
 if (BUILD_BT_SUPPORT)
+ if (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   list(APPEND LIBRARIES bluetooth)
+ endif()
 endif()
 
 set(SOURCES
@@ -76,4 +80,10 @@ set(SOURCES
 
 create_test("transport_manager_test" "${SOURCES}" "${LIBRARIES}")
 file(COPY smartDeviceLink_test.ini DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+
+if(MSVC)
+  target_link_libraries("transport_manager_test" ws2_32)
+  target_link_libraries(transport_manager_test Bthprops.lib)
+endif()
+
 endif()
