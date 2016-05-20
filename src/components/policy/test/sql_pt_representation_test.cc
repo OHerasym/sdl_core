@@ -70,10 +70,18 @@ namespace test {
 namespace components {
 namespace policy {
 
+namespace {
+const std::string kStorageFolder = ".";
+const int kAttemptsToOpenPolicyDb = 5;
+const int kOpenAttemptTimeoutMs = 7000;
+}
+
 class SQLPTRepresentationTest : public SQLPTRepresentation,
                                 public ::testing::Test {
  protected:
-  SQLPTRepresentationTest() : SQLPTRepresentation(".", 5, 7000) {}
+  SQLPTRepresentationTest()
+      : SQLPTRepresentation(
+            kStorageFolder, kAttemptsToOpenPolicyDb, kOpenAttemptTimeoutMs) {}
   static DBMS* dbms;
   static SQLPTRepresentation* reps;
   static const std::string kDatabaseName;
@@ -85,7 +93,8 @@ class SQLPTRepresentationTest : public SQLPTRepresentation,
     const std::string kAppStorageFolder = ".";
     file_system::RemoveDirectory(kAppStorageFolder, false);
     file_system::DeleteFile("policy.sqlite");
-    reps = new SQLPTRepresentation(kAppStorageFolder, 5, 7000);
+    reps = new SQLPTRepresentation(
+        kStorageFolder, kAttemptsToOpenPolicyDb, kOpenAttemptTimeoutMs);
     dbms = new DBMS(kDatabaseName);
     policy_settings_ = std::auto_ptr<policy_handler_test::MockPolicySettings>(
         new policy_handler_test::MockPolicySettings());

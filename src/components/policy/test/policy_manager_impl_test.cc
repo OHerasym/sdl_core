@@ -104,9 +104,13 @@ class PolicyManagerImplTest : public ::testing::Test {
   PolicyManagerImpl* manager;
   MockCacheManagerInterface* cache_manager;
   NiceMock<MockPolicyListener> listener;
+  const std::string kAppStorageFolder = "storage1";
+  const int kAttemptsToOpenPolicyDb = 1;
+  const int kOpenAttemptTimeoutMs = 10000;
 
   void SetUp() OVERRIDE {
-    manager = new PolicyManagerImpl("testing", 1, 10000);
+    manager = new PolicyManagerImpl(
+        kAppStorageFolder, kAttemptsToOpenPolicyDb, kOpenAttemptTimeoutMs);
     manager->set_listener(&listener);
     cache_manager = new MockCacheManagerInterface();
     manager->set_cache_manager(cache_manager);
