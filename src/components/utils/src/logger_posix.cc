@@ -42,6 +42,12 @@
 __attribute__((
     visibility("hidden"))) logger::Logger::Pimpl logger::Logger::impl_;
 
+__attribute__((
+    visibility("hidden"))) const char* logger::Logger::logger_name_;
+
+__attribute__((
+    visibility("hidden"))) logger::LoggerType logger::Logger::logger_;
+
 ////////////////////////////////////////////////////////////////////////////////
 /// logger::Logger::Impl
 ////////////////////////////////////////////////////////////////////////////////

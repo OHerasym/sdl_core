@@ -37,6 +37,7 @@
 #include <cerrno>
 #include <string>
 #include <sstream>
+#include <iostream>
 
 #if defined(LOG4CXX_LOGGER)
 #include <log4cxx/logger.h>
@@ -97,6 +98,21 @@ class Logger {
 
   static void SetLogger(Pimpl& impl);
   static Pimpl& GetLogger();
+  static const char* GetLoggerName() {
+      return logger_name_;
+  }
+
+  static void SetLoggerName(const char* name) {
+      logger_name_ = name;
+  }
+
+  static void set_logger(LoggerType& logger) {
+      logger_ = logger;
+  }
+
+  static LoggerType& read_logger() {
+      return logger_;
+  }
 
  private:
   Logger();
@@ -105,9 +121,23 @@ class Logger {
   ~Logger();
 
   static Pimpl impl_;
+  static const char* logger_name_;
+  static LoggerType logger_;
+};
+//const char* logger::Logger::logger_name_;
+
+class Log {
+public:
+    Log(const char* logger_name) {
+        LoggerType logger_var(log4cxx::Logger::getLogger(logger_name));
+        Logger::set_logger(logger_var);
+    }
+//private:
+//    LoggerType log_pointer_;
 };
 
 }  // namespace logger
+
 
 #undef INIT_LOGGER
 #if defined(LOG4CXX_LOGGER)
@@ -131,14 +161,20 @@ class Logger {
 #undef GET_LOGGER
 #define GET_LOGGER() logger::Logger::GetLogger()
 
+#undef SET_LOGGER_NAME
+#define SET_LOGGER_NAME(logger_name) do { logger::Logger::SetLoggerName(logger_name); } while(false);
+
 #undef CREATE_LOGGERPTR_LOCAL
 #if defined(LOG4CXX_LOGGER)
 #define CREATE_LOGGERPTR_LOCAL(logger_var, logger_name) \
-  logger::LoggerType logger_var(log4cxx::Logger::getLogger(logger_name));
+    logger::LoggerType logger_var(log4cxx::Logger::getLogger(logger_name));
 #else
 #define CREATE_LOGGERPTR_LOCAL(logger_var, logger_name) \
   logger::LoggerType logger_var(logger_name);
 #endif
+
+#undef CREATE_SDL_LOGGER
+#define CREATE_SDL_LOGGER(logger_name) logger::Log log(logger_name);
 
 #undef CREATE_LOGGERPTR_GLOBAL
 #define CREATE_LOGGERPTR_GLOBAL(logger_var, logger_name) \
@@ -166,9 +202,17 @@ class Logger {
     logger::Logger::PushLog(logger_var, level, accumulator.str(), location); \
   } while (false)
 
+#undef LOG_MESSAGE
+#define LOG_MESSAGE(logger_var, log_level, message) \
+  LOG_WITH_LEVEL(logger_var, logger::LogLevel::log_level, message, __LINE__)
+
+//#undef LOGGER_TRACE
+//#define LOGGER_TRACE(logger_var, message)
+//  LOG_WITH_LEVEL(logger_var, logger::LogLevel::LL_TRACE, message, __LINE__)
+
 #undef LOGGER_TRACE
 #define LOGGER_TRACE(logger_var, message) \
-  LOG_WITH_LEVEL(logger_var, logger::LogLevel::LL_TRACE, message, __LINE__)
+    LOG_MESSAGE(logger_var, LL_TRACE, message)
 
 #undef LOGGER_DEBUG
 #define LOGGER_DEBUG(logger_var, message) \
@@ -181,6 +225,9 @@ class Logger {
 #undef LOGGER_WARN
 #define LOGGER_WARN(logger_var, message) \
   LOG_WITH_LEVEL(logger_var, logger::LogLevel::LL_WARN, message, __LINE__)
+
+#undef LOG_WARN
+#define LOG_WARN(message) LOGGER_WARN(logger::Logger::read_logger(), message)
 
 #undef LOGGER_ERROR
 #define LOGGER_ERROR(logger_var, message) \
