@@ -109,7 +109,7 @@ bool LifeCycle::StartComponents() {
 #ifdef OS_WINDOWS
   WSAData wsa_data;
   if (0 != WSAStartup(MAKEWORD(2, 2), &wsa_data)) {
-    LOGGER_ERROR("WSAStartup() failed");
+    SDL_ERROR("WSAStartup() failed");
     return false;
   }
 #endif

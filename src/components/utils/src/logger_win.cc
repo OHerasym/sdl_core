@@ -36,6 +36,7 @@
 #include <stdio.h>
 
 logger::Logger::Pimpl logger::Logger::impl_;
+logger::LoggerType logger::Logger::logger_;
 
 ////////////////////////////////////////////////////////////////////////////////
 /// logger::Logger::Impl

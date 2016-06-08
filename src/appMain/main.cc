@@ -57,10 +57,11 @@ int main(int argc, char* argv[]) {
 //  CREATE_SDL_LOGGER("SDLMain");
 //  LOG_WARN("1111111111111111111111111111");
   CREATE_LOGGERPTR_LOCAL("SDLMain");
+#if defined(OS_POSIX)
   if (!utils::appenders_loader.Loaded()) {
        SDL_ERROR("Appenders plugin not loaded, file logging disabled");
   }
-
+#endif
   SDL_INFO("Application started!");
   SDL_INFO("SDL version: " << profile_instance.sdl_version());
 
