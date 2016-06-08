@@ -35,7 +35,7 @@
 
 namespace media_manager {
 
-CREATE_LOGGERPTR_GLOBAL(logger, "StreamerAdapter")
+CREATE_LOGGERPTR_GLOBAL("StreamerAdapter")
 
 StreamerAdapter::StreamerAdapter(Streamer* const streamer)
     : current_application_(0), messages_(), streamer_(streamer), thread_(NULL) {
@@ -50,9 +50,9 @@ StreamerAdapter::~StreamerAdapter() {
 }
 
 void StreamerAdapter::StartActivity(int32_t application_key) {
-  LOGGER_AUTO_TRACE(logger);
+  SDL_AUTO_TRACE();
   if (is_app_performing_activity(application_key)) {
-    LOGGER_WARN(logger,
+    SDL_WARN(
                 "Activity for application: " << application_key
                                              << " has been already started");
     return;
@@ -72,9 +72,9 @@ void StreamerAdapter::StartActivity(int32_t application_key) {
 }
 
 void StreamerAdapter::StopActivity(int32_t application_key) {
-  LOGGER_AUTO_TRACE(logger);
+  SDL_AUTO_TRACE();
   if (!is_app_performing_activity(application_key)) {
-    LOGGER_WARN(logger,
+    SDL_WARN(
                 "Activity for application: " << application_key
                                              << " has not been started");
     return;
@@ -93,9 +93,9 @@ void StreamerAdapter::StopActivity(int32_t application_key) {
 
 void StreamerAdapter::SendData(int32_t application_key,
                                const ::protocol_handler::RawMessagePtr msg) {
-  LOGGER_AUTO_TRACE(logger);
+  SDL_AUTO_TRACE();
   if (!is_app_performing_activity(application_key)) {
-    LOGGER_ERROR(logger,
+    SDL_ERROR(
                  "Activity for application: " << application_key
                                               << " has not been started");
     return;
@@ -116,13 +116,13 @@ StreamerAdapter::Streamer::Streamer(StreamerAdapter* const adapter)
 StreamerAdapter::Streamer::~Streamer() {}
 
 void StreamerAdapter::Streamer::threadMain() {
-  LOGGER_AUTO_TRACE(logger);
+  SDL_AUTO_TRACE();
   if (!adapter_) {
-    LOGGER_ERROR(logger, "Null pointer to adapter");
+    SDL_ERROR("Null pointer to adapter");
     return;
   }
   if (!Connect()) {
-    LOGGER_ERROR(logger, "Unable to connect");
+    SDL_ERROR("Unable to connect");
     return;
   }
   stop_flag_ = false;
@@ -131,22 +131,22 @@ void StreamerAdapter::Streamer::threadMain() {
     while (!adapter_->messages_.empty()) {
       protocol_handler::RawMessagePtr msg;
       if (!adapter_->messages_.pop(msg)) {
-        LOGGER_ERROR(logger, "Empty message queue");
+        SDL_ERROR("Empty message queue");
         continue;
       }
       if (!msg) {
-        LOGGER_ERROR(logger, "Null pointer message");
+        SDL_ERROR("Null pointer message");
         continue;
       }
       if (!Send(msg)) {
-        LOGGER_ERROR(logger, "Unable to send. Disconnecting");
+        SDL_ERROR("Unable to send. Disconnecting");
         Disconnect();
         return;
       }
       static int32_t messages_for_session = 0;
       ++messages_for_session;
 
-      LOGGER_DEBUG(logger,
+      SDL_DEBUG(
                    "Handling map streaming message. This is "
                        << messages_for_session << " message for "
                        << adapter_->current_application_);
@@ -162,7 +162,7 @@ void StreamerAdapter::Streamer::threadMain() {
 }
 
 void StreamerAdapter::Streamer::exitThreadMain() {
-  LOGGER_AUTO_TRACE(logger);
+  SDL_AUTO_TRACE();
   stop_flag_ = true;
   if (adapter_) {
     adapter_->messages_.Shutdown();

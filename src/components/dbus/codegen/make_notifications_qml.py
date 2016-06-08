@@ -180,13 +180,13 @@ class Notifications_qml(FordXmlParser):
                 qml_args(variable_name_needed = True)
                 out.write(") {\n")
                 with CodeBlock(out) as out:
-                    out.write("LOG4CXX_TRACE(logger_, \"ENTER\");\n\n")     
+                    out.write("LOG4CXX_TRACE( \"ENTER\");\n\n")     
                     for param_el in notification_el.findall("param"):
                         param = self.make_param_desc(param_el, iface_name)
                         tmp_param_name = param.name + "_qvariant"
                         out.write("QVariant %s;\n" % tmp_param_name)
                         out.write("%s = ValueToVariant(%s);\n" % (tmp_param_name, param.name))
-                        self.write_param_validation(param, param.name, "\nLOG4CXX_ERROR(logger_, \"%s in %s out of bounds\")" % (param.name, notific_full_name), out)
+                        self.write_param_validation(param, param.name, "\nLOG4CXX_ERROR( \"%s in %s out of bounds\")" % (param.name, notific_full_name), out)
                         out.write("\n")                    
                     out.write("emit %s(" % self.first_letter_to_lower_case( notification_el.get("name")) )
                 param_el_count = 1
@@ -200,7 +200,7 @@ class Notifications_qml(FordXmlParser):
                     param_el_count += 1  
                 out.write(");\n")
                 with CodeBlock(out) as out:                    
-                    out.write("LOG4CXX_TRACE(logger_, \"EXIT\");\n")                                                 
+                    out.write("LOG4CXX_TRACE( \"EXIT\");\n")                                                 
                 out.write("}\n\n")
 
 
@@ -382,6 +382,6 @@ source_out.write("""
 
 source_out.write("#include \"sdl_proxy.h\"\n")
 source_out.write("#include \"utils/logger.h\"\n")
-source_out.write("CREATE_LOGGERPTR_GLOBAL(logger_, \"DBusPlugin\")\n\n")
+source_out.write("CREATE_LOGGERPTR_GLOBAL( \"DBusPlugin\")\n\n")
 
 impl.make_source(source_out)

@@ -104,12 +104,12 @@ Subrequest subrequests[] = {
 #endif  // #ifdef HMI_DBUS_API
 
 void UnsubscribeVehicleDataRequest::Run() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   ApplicationSharedPtr app = application_manager_.application(connection_key());
 
   if (!app) {
-    LOGGER_ERROR(logger_, "NULL pointer");
+    SDL_ERROR( "NULL pointer");
     SendResponse(false, mobile_apis::Result::APPLICATION_NOT_REGISTERED);
     return;
   }
@@ -144,14 +144,14 @@ void UnsubscribeVehicleDataRequest::Run() {
         }
 
         if (!app->UnsubscribeFromIVI(static_cast<uint32_t>(key_type))) {
-          LOGGER_ERROR(logger_,
+          SDL_ERROR(
                        "Unable to unsubscribe from "
                        "VehicleDataType: "
                            << key_type);
           continue;
         }
 
-        LOGGER_DEBUG(logger_,
+        SDL_DEBUG(
                      "Unsubscribed app with connection key "
                          << connection_key()
                          << " from VehicleDataType: " << key_type);
@@ -159,7 +159,7 @@ void UnsubscribeVehicleDataRequest::Run() {
         ++unsubscribed_items;
 
         if (IsSomeoneSubscribedFor(key_type)) {
-          LOGGER_DEBUG(logger_,
+          SDL_DEBUG(
                        "There are another apps still subscribed for "
                        "VehicleDataType: "
                            << key_type);
@@ -226,7 +226,7 @@ void UnsubscribeVehicleDataRequest::Run() {
       hmi_requests_.push_back(hmi_request);
     }
   }
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               hmi_requests_.size() << " requests are going to be sent to HMI");
 
   // Send subrequests
@@ -242,13 +242,13 @@ void UnsubscribeVehicleDataRequest::Run() {
 }
 
 void UnsubscribeVehicleDataRequest::on_event(const event_engine::Event& event) {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   using namespace helpers;
 
   const smart_objects::SmartObject& message = event.smart_object();
 
   if (hmi_apis::FunctionID::VehicleInfo_UnsubscribeVehicleData != event.id()) {
-    LOGGER_ERROR(logger_, "Received unknown event.");
+    SDL_ERROR( "Received unknown event.");
     return;
   }
 
@@ -283,7 +283,7 @@ void UnsubscribeVehicleDataRequest::on_event(const event_engine::Event& event) {
                  static_cast<mobile_apis::Result::eType>(it->status)) {
         status = mobile_api::Result::eType::GENERIC_ERROR;
       }
-      LOGGER_TRACE(logger_,
+      SDL_TRACE(
                    "Status from HMI: " << it->status
                                        << ", so response status become "
                                        << status);
@@ -301,7 +301,7 @@ void UnsubscribeVehicleDataRequest::on_event(const event_engine::Event& event) {
       }
     }
 
-    LOGGER_INFO(logger_, "All HMI requests are complete");
+    SDL_INFO( "All HMI requests are complete");
     if (true == any_arg_success) {
       SetAllowedToTerminate(false);
     }
@@ -359,7 +359,7 @@ struct SubscribedToIVIPredicate {
 };
 bool UnsubscribeVehicleDataRequest::IsSomeoneSubscribedFor(
     const uint32_t param_id) const {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   SubscribedToIVIPredicate finder(param_id);
   DataAccessor<ApplicationSet> accessor = application_manager_.applications();
   ApplicationSetConstIt it = std::find_if(
@@ -369,7 +369,7 @@ bool UnsubscribeVehicleDataRequest::IsSomeoneSubscribedFor(
 
 void UnsubscribeVehicleDataRequest::AddAlreadyUnsubscribedVI(
     smart_objects::SmartObject& response) const {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   using namespace mobile_apis;
   VehicleInfoSubscriptions::const_iterator it_same_app =
       vi_already_unsubscribed_by_this_app_.begin();
@@ -389,13 +389,13 @@ void UnsubscribeVehicleDataRequest::AddAlreadyUnsubscribedVI(
 }
 
 void UnsubscribeVehicleDataRequest::UpdateHash() const {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   ApplicationSharedPtr application =
       application_manager_.application(connection_key());
   if (application) {
     application->UpdateHash();
   } else {
-    LOGGER_ERROR(logger_,
+    SDL_ERROR(
                  "Application with connection_key = " << connection_key()
                                                       << " doesn't exist.");
   }

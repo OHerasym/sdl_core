@@ -33,8 +33,6 @@
 #include "utils/logger.h"
 #include <iostream>
 
-CREATE_SDL_LOGGER("rarara")
-
 namespace utils {
 
 BitStream::BitStream(uint8_t* bytes, size_t bytes_count)
@@ -47,9 +45,6 @@ BitStream::BitStream(uint8_t* bytes, size_t bytes_count)
 BitStream::~BitStream() {}
 
 size_t BitStream::FullBytesLeft() {
-
-  LOG_WARN("ri");
-
   size_t left = bytes_count_ - byte_offset_;
   if (bit_offset_ != 0)
     left -= 1;

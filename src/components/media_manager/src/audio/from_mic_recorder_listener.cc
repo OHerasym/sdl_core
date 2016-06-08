@@ -37,7 +37,7 @@
 
 namespace media_manager {
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "MediaManager")
+CREATE_LOGGERPTR_GLOBAL( "MediaManager")
 
 FromMicRecorderListener::FromMicRecorderListener(
     const std::string& file_name,
@@ -45,7 +45,7 @@ FromMicRecorderListener::FromMicRecorderListener(
     : reader_(NULL), file_name_(file_name), application_manager_(app_mngr) {}
 
 FromMicRecorderListener::~FromMicRecorderListener() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   if (reader_) {
     reader_->join();
     delete reader_->delegate();
@@ -60,7 +60,7 @@ void FromMicRecorderListener::OnErrorReceived(int32_t application_key,
                                               const DataForListener& data) {}
 
 void FromMicRecorderListener::OnActivityStarted(int32_t application_key) {
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               "FromMicRecorderListener::OnActivityStarted " << application_key);
   if (application_key == current_application_) {
     return;
@@ -77,10 +77,10 @@ void FromMicRecorderListener::OnActivityStarted(int32_t application_key) {
 }
 
 void FromMicRecorderListener::OnActivityEnded(int32_t application_key) {
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               "FromMicRecorderListener::OnActivityEnded " << application_key);
   if (application_key != current_application_) {
-    LOGGER_WARN(logger_,
+    SDL_WARN(
                 "Not performing activity on " << application_key << " but on "
                                               << current_application_);
     return;

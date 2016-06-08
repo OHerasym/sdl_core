@@ -82,8 +82,8 @@
 
 #define DCHECK(condition)                                                    \
   if (!(condition)) {                                                        \
-    CREATE_LOGGERPTR_LOCAL(logger_, "Utils");                                \
-    LOGGER_FATAL(logger_,                                                    \
+    CREATE_LOGGERPTR_LOCAL( "Utils");                                \
+    SDL_FATAL(                                                    \
                  "DCHECK failed with \"" << #condition << "\" ["             \
                                          << __FUNCTION__ << "][" << __FILE__ \
                                          << ':' << __LINE__ << ']');         \
@@ -96,8 +96,8 @@
  */
 #define DCHECK_OR_RETURN(condition, return_value)                            \
   if (!(condition)) {                                                        \
-    CREATE_LOGGERPTR_LOCAL(logger_, "Utils");                                \
-    LOGGER_FATAL(logger_,                                                    \
+    CREATE_LOGGERPTR_LOCAL( "Utils");                                \
+    SDL_FATAL(                                                    \
                  "DCHECK failed with \"" << #condition << "\" ["             \
                                          << __FUNCTION__ << "][" << __FILE__ \
                                          << ':' << __LINE__ << ']');         \
@@ -110,8 +110,8 @@
  */
 #define DCHECK_OR_RETURN_VOID(condition)                                     \
   if (!(condition)) {                                                        \
-    CREATE_LOGGERPTR_LOCAL(logger_, "Utils");                                \
-    LOGGER_FATAL(logger_,                                                    \
+    CREATE_LOGGERPTR_LOCAL( "Utils");                                \
+    SDL_FATAL(                                                    \
                  "DCHECK failed with \"" << #condition << "\" ["             \
                                          << __FUNCTION__ << "][" << __FILE__ \
                                          << ':' << __LINE__ << ']');         \

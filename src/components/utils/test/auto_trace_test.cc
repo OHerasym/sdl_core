@@ -48,7 +48,7 @@ namespace utils_test {
 
 using namespace ::logger;
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "AutoTraceTestLog")
+CREATE_LOGGERPTR_GLOBAL( "AutoTraceTestLog")
 
 namespace {
 const std::string kFileName =
@@ -72,8 +72,8 @@ void InitLogger() {
 }
 
 void CreateDeleteAutoTrace(const std::string& testlog) {
-  LOGGER_AUTO_TRACE(logger_);
-  LOGGER_DEBUG(logger_, testlog);
+  SDL_AUTO_TRACE();
+  SDL_DEBUG( testlog);
 }
 
 /**

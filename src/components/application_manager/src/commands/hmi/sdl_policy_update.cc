@@ -43,11 +43,11 @@ SDLPolicyUpdate::SDLPolicyUpdate(const MessageSharedPtr& message,
 SDLPolicyUpdate::~SDLPolicyUpdate() {}
 
 void SDLPolicyUpdate::Run() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 #ifdef EXTENDED_POLICY
   SendRequest();
 #else
-  LOG4CXX_WARN(logger_,
+  LOG4CXX_WARN(
                "This RPC is part of extended policy flow."
                "Please re-build with extended policy mode enabled.");
 #endif

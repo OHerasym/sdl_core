@@ -150,7 +150,7 @@ class Impl(FordXmlParser):
         with CodeBlock(out) as out:
             out.write("if (variant.type() != QVariant::Map) {\n")
             with CodeBlock(out) as out:
-                out.write("""LOG4CXX_ERROR(logger_, "Input argument isn't a map");\n""")
+                out.write("""LOG4CXX_ERROR( "Input argument isn't a map");\n""")
                 out.write("return false;\n")
             out.write("}\n")
             out.write("QVariantMap map = variant.toMap();\n")
@@ -163,7 +163,7 @@ class Impl(FordXmlParser):
         with CodeBlock(out) as out:
             out.write("if (variant.type() != QVariant::List) {\n")
             with CodeBlock(out) as out:
-                out.write("""LOG4CXX_ERROR(logger_, "Input argument isn't a list");\n""")
+                out.write("""LOG4CXX_ERROR( "Input argument isn't a list");\n""")
                 out.write("return false;\n")
             out.write("}\n")
             out.write("QList<QVariant> list = variant.toList();\n")
@@ -181,12 +181,12 @@ class Impl(FordXmlParser):
             out.write("QVariantMap::const_iterator it = map.find(name);\n")
             out.write("if (map.end() == it) {\n")
             with CodeBlock(out) as out:
-                out.write("""LOG4CXX_WARN(logger_, "Argument '" << name << "' not found");\n""")
+                out.write("""LOG4CXX_WARN( "Argument '" << name << "' not found");\n""")
                 out.write("return false;\n")
             out.write("}\n")
             out.write("if (it->type() != QVariant::Map) {\n")
             with CodeBlock(out) as out:
-                out.write("""LOG4CXX_ERROR(logger_, "Argument '" << name << "' isn't a map");\n""")
+                out.write("""LOG4CXX_ERROR( "Argument '" << name << "' isn't a map");\n""")
                 out.write("return false;\n")
             out.write("}\n")
             out.write("const QVariantMap& inmap = it->toMap();\n")
@@ -403,7 +403,7 @@ class Impl(FordXmlParser):
                 sig_signature = self.make_qml_signal_signature(n, iface_name, signame, True)
                 slot_signature = self.make_qml_signal_signature(n, iface_name, slotname, True)
                 out.write("connect(api_, SIGNAL(" + sig_signature + "), this, SLOT(" + slot_signature + "));\n")
-            out.write("LOG4CXX_TRACE(logger_, \"CONNECT SIGNALS: \" << __PRETTY_FUNCTION__ );\n")
+            out.write("LOG4CXX_TRACE( \"CONNECT SIGNALS: \" << __PRETTY_FUNCTION__ );\n")
         out.write("}\n\n")
 
         for (request,response) in request_responses:
@@ -429,14 +429,14 @@ class Impl(FordXmlParser):
                     out.write("QVariant {0}_arg;\n".format(p.name))
                     out.write("{0}_arg.setValue({0}_out);\n".format(p.name))
                     out.write("message << {0}_arg;\n".format(p.name))
-                    out.write("LOG4CXX_DEBUG(logger_, \"Output arguments:\\n\" << QVariant(map));\n")
-                out.write("LOG4CXX_TRACE(logger_, \"REPLY ASYNC: \" << __PRETTY_FUNCTION__ );\n")
+                    out.write("LOG4CXX_DEBUG( \"Output arguments:\\n\" << QVariant(map));\n")
+                out.write("LOG4CXX_TRACE( \"REPLY ASYNC: \" << __PRETTY_FUNCTION__ );\n")
                 out.write("return true;\n")
             out.write("}\n\n")
             
             out.write("{0} {{\n".format(self.make_method_signature(request, response, iface_name, True)))
             with CodeBlock(out) as out:
-                out.write("LOG4CXX_TRACE(logger_, \"ENTER: \" << __PRETTY_FUNCTION__ );\n")
+                out.write("LOG4CXX_TRACE( \"ENTER: \" << __PRETTY_FUNCTION__ );\n")
                 out.write("int ret = 0;\n")
                 return_statement = "return ret;\n"
                 out.write("QVariantMap in_arg;\n");
@@ -444,7 +444,7 @@ class Impl(FordXmlParser):
                 for param in in_params:
                     self.write_param_validation(param, param.name + "_in", "RaiseDbusError(this, InvalidData); return ret", out)
                     out.write("PutArgToMap(in_arg, \"" + param.name + "\", " + param.name + "_in);\n")
-                out.write("LOG4CXX_DEBUG(logger_, \"Input arguments:\\n\" << in_arg);\n")
+                out.write("LOG4CXX_DEBUG( \"Input arguments:\\n\" << in_arg);\n")
                 method_name = request.get('name')[:1].lower() + request.get('name')[1:]
 
                 out.write("dbusController->message = &message;\n")
@@ -453,7 +453,7 @@ class Impl(FordXmlParser):
                 out.write("""if (!QMetaObject::invokeMethod(api_, "{0}", Qt::{1}Connection, Q_RETURN_ARG(QVariant, out_arg_v), Q_ARG(QVariant, QVariant(in_arg)))) {{\n""".format(method_name, invoke_type_connection))
                 with CodeBlock(out) as out:
                     out.write("RaiseDbusError(this, InvalidData);\n")
-                    out.write("LOG4CXX_ERROR(logger_, \"Can't invoke method " + method_name +"\");\n    ")
+                    out.write("LOG4CXX_ERROR( \"Can't invoke method " + method_name +"\");\n    ")
                     out.write("return ret;\n")
                 out.write("}\n")
 
@@ -478,7 +478,7 @@ class Impl(FordXmlParser):
                 with CodeBlock(out) as out:
                     out.write("message.setDelayedReply(true);\n")
                     out.write("dbusController->addMessage(message, &fill%s%sReply, async_uid);\n" % (classname, request.get('name')))
-                    out.write("LOG4CXX_TRACE(logger_, \"EXIT ASYNC: \" << __PRETTY_FUNCTION__ );\n")
+                    out.write("LOG4CXX_TRACE( \"EXIT ASYNC: \" << __PRETTY_FUNCTION__ );\n")
                     out.write("return ret;\n");
                 out.write("}\n\n")
 
@@ -488,8 +488,8 @@ class Impl(FordXmlParser):
 
                 out.write("GetArgFromMap(out_arg, \"__retCode\", ret);\n")
                 out.write("GetArgFromMap(out_arg, \"__message\", userMessage_out);\n")
-                out.write("LOG4CXX_DEBUG(logger_, \"Output arguments:\\n\" << QVariant(out_arg));\n")
-                out.write("LOG4CXX_TRACE(logger_, \"EXIT: \" << __PRETTY_FUNCTION__ );\n")
+                out.write("LOG4CXX_DEBUG( \"Output arguments:\\n\" << QVariant(out_arg));\n")
+                out.write("LOG4CXX_TRACE( \"EXIT: \" << __PRETTY_FUNCTION__ );\n")
                 out.write("return ret;\n")
             out.write("}\n\n")
 
@@ -498,8 +498,8 @@ class Impl(FordXmlParser):
             slot_signature = self.make_qml_signal_signature(n, iface_name, slotname, False, True)
             out.write(slot_signature + " {\n")
             params = n.findall('param')
-            out.write("  LOG4CXX_TRACE(logger_, \"EMIT SIGNAL: \" << __PRETTY_FUNCTION__ );\n")
-            out.write("  LOG4CXX_DEBUG(logger_, \"Arguments:\\n{\"")
+            out.write("  LOG4CXX_TRACE( \"EMIT SIGNAL: \" << __PRETTY_FUNCTION__ );\n")
+            out.write("  LOG4CXX_DEBUG( \"Arguments:\\n{\"")
             for p in params[0:-1]:
                 param = self.make_param_desc(p, iface_name)
                 out.write(" << \" " + param.name + ":\" << " + param.name + " << \",\"")
@@ -516,14 +516,14 @@ class Impl(FordXmlParser):
                     if param.array or (param.type not in ['Integer', 'String', 'Float', 'Boolean'] and not param.enum):
                         out.write('  ' + param_type + ' ' + param_name + ";\n")
                         out.write('  if (!VariantToValue(' + param.name + ', ' + param_name + ")) {\n")
-                        out.write("    LOG4CXX_ERROR(logger_, \"Can't convert variant to value\");\n")
+                        out.write("    LOG4CXX_ERROR( \"Can't convert variant to value\");\n")
                         out.write("  return;}\n")
                 else:
                     out.write('  ' + param_type + ' ' + param_name + ";\n")
                     out.write('  ' + param_name + '.presence = !' + param.name + ".isNull();\n")
                     out.write('  if (' + param_name + ".presence) {\n")
                     out.write('    if (!VariantToValue(' + param.name + ', ' + param_name + ".val)) {\n")
-                    out.write("      LOG4CXX_ERROR(logger_, \"Can't convert variant to value\");\n")
+                    out.write("      LOG4CXX_ERROR( \"Can't convert variant to value\");\n")
                     out.write("      return;\n    }\n")
                     out.write("  }\n")
             out.write('  emit ' + n.get('name') + '(')

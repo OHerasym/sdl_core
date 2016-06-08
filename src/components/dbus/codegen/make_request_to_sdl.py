@@ -119,7 +119,7 @@ class Impl(FordXmlParser):
                     out.write('QVariant %s, ' % (param_el.get('name')))
                 out.write('Q%sValue hmi_callback) {\n' % prefix_class_item)
                 with CodeBlock(out) as output:
-                    output.write('LOG4CXX_TRACE(logger_, "ENTER");\n')
+                    output.write('LOG4CXX_TRACE( "ENTER");\n')
                     output.write('QList<QVariant> args;\n')           
                     for param_el in request.findall('param'):
                         param = self.make_param_desc(param_el, iface_name)
@@ -127,17 +127,17 @@ class Impl(FordXmlParser):
                         output.write('if (VariantToValue(%s, %s)) {\n' % (param.name, param.name + '_tmp'))
                         with CodeBlock(output) as out:
                             self.write_param_validation(param, param.name + "_tmp",
-                                "\nLOG4CXX_ERROR(logger_, \"%s in %s out of bounds\");\nreturn false" % (param.name, request_full_name),
+                                "\nLOG4CXX_ERROR( \"%s in %s out of bounds\");\nreturn false" % (param.name, request_full_name),
                                 out)
                             out.write('args << QVariant::fromValue(%s);\n' % (param.name + '_tmp'))
                         output.write('} else {\n')
                         with CodeBlock(output) as out:
-                            out.write('LOG4CXX_ERROR(logger_, "%s in %s is NOT valid");\n' % (param.name, request_full_name))
+                            out.write('LOG4CXX_ERROR( "%s in %s is NOT valid");\n' % (param.name, request_full_name))
                             out.write('return false;\n')
                         out.write('}\n')
                     output.write('new requests::' + request_full_name + '(hmi_callback, ' + interface_el.get('name') + ' , args, '
                                   + '"' + request_name + '");\n')
-                    output.write('LOG4CXX_TRACE(logger_, "EXIT");\n')
+                    output.write('LOG4CXX_TRACE( "EXIT");\n')
                     output.write('return true;\n')
                 out.write('}\n\n')
 
@@ -330,6 +330,6 @@ source_out.write("#include <QtDBus/QDBusConnection>\n")
 source_out.write("#include <QtDBus/QDBusInterface>\n")
 source_out.write('#include "hmi_requests.h"\n')
 source_out.write('#include "utils/logger.h"\n\n')
-source_out.write('CREATE_LOGGERPTR_GLOBAL(logger_, "DBusPlugin")\n\n')
+source_out.write('CREATE_LOGGERPTR_GLOBAL( "DBusPlugin")\n\n')
 
 impl.make_source_file(source_out)

@@ -46,7 +46,7 @@
 namespace transport_manager {
 namespace transport_adapter {
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "TransportManager")
+CREATE_LOGGERPTR_GLOBAL( "TransportManager")
 
 namespace {
 UsbHandler* usb_handler;
@@ -65,14 +65,14 @@ UsbHandler::~UsbHandler() {
   if (usbd_general_connection_) {
     const int disconnect_rc = usbd_disconnect(usbd_general_connection_);
     if (EOK != disconnect_rc) {
-      LOGGER_ERROR(logger_,
+      SDL_ERROR(
                    "usbd_disconnect failed, error code " << disconnect_rc);
     }
   }
   if (usbd_aoa_connection_) {
     const int disconnect_rc = usbd_disconnect(usbd_aoa_connection_);
     if (EOK != disconnect_rc) {
-      LOGGER_ERROR(logger_,
+      SDL_ERROR(
                    "usbd_disconnect failed, error code " << disconnect_rc);
     }
   }
@@ -93,7 +93,7 @@ void UsbHandler::DeviceArrived(usbd_connection* connection,
   usbd_device* device_usbd = 0;
   const int attach_rc = usbd_attach(connection, instance, 0, &device_usbd);
   if (EOK != attach_rc) {
-    LOGGER_ERROR(logger_, "usbd_attach failed: " << attach_rc);
+    SDL_ERROR( "usbd_attach failed: " << attach_rc);
     return;
   }
 
@@ -101,7 +101,7 @@ void UsbHandler::DeviceArrived(usbd_connection* connection,
   usbd_device_descriptor_t* descriptor =
       usbd_device_descriptor(device_usbd, &node);
   if (NULL == descriptor) {
-    LOGGER_ERROR(logger_, "usbd_device_descriptor failed");
+    SDL_ERROR( "usbd_device_descriptor failed");
     return;
   }
 
@@ -139,7 +139,7 @@ void UsbHandler::DeviceLeft(usbd_device_instance_t* instance) {
     if ((*it)->GetDeviceInstance() == *instance) {
       const int detach_rc = usbd_detach((*it)->GetUsbdDevice());
       if (EOK != detach_rc)
-        LOGGER_ERROR(logger_, "usbd_detach failed: " << detach_rc);
+        SDL_ERROR( "usbd_detach failed: " << detach_rc);
       devices_.erase(it);
       break;
     }
@@ -153,14 +153,14 @@ void UsbHandler::StartControlTransferSequence(
   usbd_descriptors_t* descriptor = usbd_parse_descriptors(
       device->GetUsbdDevice(), NULL, USB_DESC_DEVICE, 0, NULL);
   if (NULL == descriptor) {
-    LOGGER_ERROR(logger_, "usbd_parse_descriptors failed");
+    SDL_ERROR( "usbd_parse_descriptors failed");
   }
 
   usbd_pipe* usb_pipe = 0;
   const int open_pipe_rc =
       usbd_open_pipe(device->GetUsbdDevice(), descriptor, &usb_pipe);
   if (EOK != open_pipe_rc) {
-    LOGGER_ERROR(logger_, "usbd_open_pipe failed, error " << open_pipe_rc);
+    SDL_ERROR( "usbd_open_pipe failed, error " << open_pipe_rc);
     return;
   }
 
@@ -172,14 +172,14 @@ void UsbHandler::StartControlTransferSequence(
 
     usbd_urb* urb = usbd_alloc_urb(NULL);
     if (NULL == urb) {
-      LOGGER_ERROR(logger_, "usbd_alloc_urb failed");
+      SDL_ERROR( "usbd_alloc_urb failed");
       break;
     }
 
     unsigned char* buf =
         static_cast<unsigned char*>(usbd_alloc(transfer->Length()));
     if (NULL == buf) {
-      LOGGER_ERROR(logger_, "usbd_alloc failed");
+      SDL_ERROR( "usbd_alloc failed");
       break;
     }
 
@@ -216,7 +216,7 @@ void UsbHandler::StartControlTransferSequence(
             static_cast<UsbControlInTransfer*>(transfer)->OnCompleted(buf);
       }
     } else {
-      LOGGER_ERROR(logger_, "usbd_io failed, error " << io_rc);
+      SDL_ERROR( "usbd_io failed, error " << io_rc);
       submit_next = false;
     }
     usbd_free(buf);
@@ -233,7 +233,7 @@ void ArrivedCallback(usbd_connection* connection,
                      usbd_device_instance_t* instance) {
   if (kAoaVid == instance->ident.vendor)
     return;
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               "USB device arrived (path "
                   << static_cast<int>(instance->path) << ", devno "
                   << static_cast<int>(instance->devno) << ", config "
@@ -246,7 +246,7 @@ void ArrivedAoaCallback(usbd_connection* connection,
                         usbd_device_instance_t* instance) {
   if (kAoaVid != instance->ident.vendor)
     return;
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               "USB AOA device arrived (path "
                   << static_cast<int>(instance->path) << ", devno "
                   << static_cast<int>(instance->devno) << ", config "
@@ -259,7 +259,7 @@ void LeftCallback(usbd_connection* connection,
                   usbd_device_instance_t* instance) {
   if (kAoaVid == instance->ident.vendor)
     return;
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               "USB device left (path "
                   << static_cast<int>(instance->path) << ", devno "
                   << static_cast<int>(instance->devno) << ", config "
@@ -272,7 +272,7 @@ void LeftAoaCallback(usbd_connection* connection,
                      usbd_device_instance_t* instance) {
   if (kAoaVid != instance->ident.vendor)
     return;
-  LOGGER_INFO(logger_,
+  SDL_INFO(
               "USB AOA device left (path "
                   << static_cast<int>(instance->path) << ", devno "
                   << static_cast<int>(instance->devno) << ", config "
@@ -295,7 +295,7 @@ TransportAdapter::Error UsbHandler::Init() {
     const int connect_rc = usbd_connect(&cparms, &usbd_general_connection_);
 
     if (EOK != connect_rc) {
-      LOGGER_ERROR(logger_, "usbd_connect failed, error code " << connect_rc);
+      SDL_ERROR( "usbd_connect failed, error code " << connect_rc);
       return TransportAdapter::FAIL;
     }
   }
@@ -313,7 +313,7 @@ TransportAdapter::Error UsbHandler::Init() {
     const int connect_rc = usbd_connect(&cparms, &usbd_aoa_connection_);
 
     if (EOK != connect_rc) {
-      LOGGER_ERROR(logger_, "usbd_connect failed, error code " << connect_rc);
+      SDL_ERROR( "usbd_connect failed, error code " << connect_rc);
       return TransportAdapter::FAIL;
     }
   }

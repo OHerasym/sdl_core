@@ -40,7 +40,7 @@
 #include "utils/logger.h"
 #include "utils/file_system.h"
 
-CREATE_LOGGERPTR_GLOBAL(logger_ptr, "Utils")
+CREATE_LOGGERPTR_GLOBAL( "Utils")
 
 namespace {
 const std::string kPlatformPipePrefix = "\\\\.\\pipe\\";
@@ -84,7 +84,7 @@ utils::Pipe::Impl::~Impl() {
 
 bool utils::Pipe::Impl::Open() {
   if (IsOpen()) {
-    LOGGER_WARN(logger_ptr,
+    SDL_WARN(
                 "Named pipe: " << name_.toStdString() << " is already opened");
     return true;
   }
@@ -93,7 +93,7 @@ bool utils::Pipe::Impl::Open() {
   if (!server_socket_->listen(name_)) {
     delete server_socket_;
     server_socket_ = NULL;
-    LOGGER_ERROR(logger_ptr,
+    SDL_ERROR(
                  "Cannot create named pipe: " << name_.toStdString());
     return false;
   }
@@ -103,7 +103,7 @@ bool utils::Pipe::Impl::Open() {
   if (!client_socket_) {
     delete server_socket_;
     server_socket_ = NULL;
-    LOGGER_ERROR(logger_ptr,
+    SDL_ERROR(
                  "Cannot connect to named pipe: " << name_.toStdString());
     return false;
   }
@@ -112,7 +112,7 @@ bool utils::Pipe::Impl::Open() {
 
 void utils::Pipe::Impl::Close() {
   if (!IsOpen()) {
-    LOGGER_WARN(logger_ptr,
+    SDL_WARN(
                 "Named pipe: " << name_.toStdString() << " is not opened");
     return;
   }
@@ -134,18 +134,18 @@ bool utils::Pipe::Impl::Write(const uint8_t* buffer,
                               size_t& bytes_written) {
   bytes_written = 0;
   if (!IsOpen()) {
-    LOGGER_ERROR(logger_ptr,
+    SDL_ERROR(
                  "Named pipe: " << name_.toStdString() << " is not opened");
     return false;
   }
   if (bytes_to_write == 0) {
-    LOGGER_WARN(logger_ptr, "Trying to write 0 bytes");
+    SDL_WARN( "Trying to write 0 bytes");
     return true;
   }
   qint64 written = client_socket_->write(reinterpret_cast<const char*>(buffer),
                                          static_cast<qint64>(bytes_to_write));
   if (-1 == written) {
-    LOGGER_ERROR(logger_ptr,
+    SDL_ERROR(
                  "Cannot write to named pipe: " << name_.toStdString());
     return false;
   }

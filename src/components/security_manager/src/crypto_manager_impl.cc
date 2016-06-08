@@ -52,7 +52,7 @@
 
 namespace security_manager {
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "SecurityManager")
+CREATE_LOGGERPTR_GLOBAL( "SecurityManager")
 
 uint32_t CryptoManagerImpl::instance_count_ = 0;
 sync_primitives::Lock CryptoManagerImpl::instance_lock_;
@@ -62,7 +62,7 @@ int debug_callback(int preverify_ok, X509_STORE_CTX* ctx) {
   if (!preverify_ok) {
     const int error = X509_STORE_CTX_get_error(ctx);
     UNUSED(error);
-    LOGGER_WARN(logger_,
+    SDL_WARN(
                 "Certificate verification failed with error "
                     << error << " \"" << X509_verify_cert_error_string(error)
                     << '"');
@@ -81,11 +81,11 @@ void free_ctx(SSL_CTX** ctx) {
 CryptoManagerImpl::CryptoManagerImpl(
     const utils::SharedPtr<const CryptoManagerSettings> set)
     : settings_(set), context_(NULL) {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   sync_primitives::AutoLock lock(instance_lock_);
   instance_count_++;
   if (instance_count_ == 1) {
-    LOGGER_DEBUG(logger_, "Openssl engine initialization");
+    SDL_DEBUG( "Openssl engine initialization");
     SSL_load_error_strings();
     ERR_load_BIO_strings();
     OpenSSL_add_all_algorithms();
@@ -94,36 +94,36 @@ CryptoManagerImpl::CryptoManagerImpl(
 }
 
 CryptoManagerImpl::~CryptoManagerImpl() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   sync_primitives::AutoLock lock(instance_lock_);
-  LOGGER_DEBUG(logger_, "Deinitilization");
+  SDL_DEBUG( "Deinitilization");
   if (!context_) {
-    LOGGER_WARN(logger_, "Manager is not initialized");
+    SDL_WARN( "Manager is not initialized");
   } else {
     SSL_CTX_free(context_);
   }
   instance_count_--;
   if (instance_count_ == 0) {
-    LOGGER_DEBUG(logger_, "Openssl engine deinitialization");
+    SDL_DEBUG( "Openssl engine deinitialization");
     EVP_cleanup();
     ERR_free_strings();
   }
 }
 
 bool CryptoManagerImpl::Init() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   const Mode mode = get_settings().security_manager_mode();
   const bool is_server = (mode == SERVER);
   if (is_server) {
-    LOGGER_DEBUG(logger_, "Server mode");
+    SDL_DEBUG( "Server mode");
   } else {
-    LOGGER_DEBUG(logger_, "Client mode");
+    SDL_DEBUG( "Client mode");
   }
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Peer verification "
                    << (get_settings().verify_peer() ? "enabled" : "disabled"));
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "CA certificate file is \"" << get_settings().ca_cert_path()
                                            << '"');
 
@@ -141,8 +141,8 @@ bool CryptoManagerImpl::Init() {
       break;
     case TLSv1_1:
 #if OPENSSL_VERSION_NUMBER < TLS1_1_MINIMAL_VERSION
-      LOGGER_WARN(
-          logger_,
+      SDL_WARN(
+          
           "OpenSSL has no TLSv1.1 with version lower 1.0.1, set TLSv1.0");
       method = is_server ? TLSv1_server_method() : TLSv1_client_method();
 #else
@@ -151,8 +151,8 @@ bool CryptoManagerImpl::Init() {
       break;
     case TLSv1_2:
 #if OPENSSL_VERSION_NUMBER < TLS1_1_MINIMAL_VERSION
-      LOGGER_WARN(
-          logger_,
+      SDL_WARN(
+          
           "OpenSSL has no TLSv1.2 with version lower 1.0.1, set TLSv1.0");
       method = is_server ? TLSv1_server_method() : TLSv1_client_method();
 #else
@@ -160,7 +160,7 @@ bool CryptoManagerImpl::Init() {
 #endif
       break;
     default:
-      LOGGER_ERROR(logger_,
+      SDL_ERROR(
                    "Unknown protocol: "
                        << get_settings().security_manager_protocol_name());
       return false;
@@ -178,30 +178,30 @@ bool CryptoManagerImpl::Init() {
   set_certificate(get_settings().certificate_data());
 
   if (get_settings().ciphers_list().empty()) {
-    LOGGER_WARN(logger_, "Empty ciphers list");
+    SDL_WARN( "Empty ciphers list");
   } else {
-    LOGGER_DEBUG(logger_, "Cipher list: " << get_settings().ciphers_list());
+    SDL_DEBUG( "Cipher list: " << get_settings().ciphers_list());
     if (!SSL_CTX_set_cipher_list(context_,
                                  get_settings().ciphers_list().c_str())) {
-      LOGGER_ERROR(
-          logger_,
+      SDL_ERROR(
+          
           "Could not set cipher list: " << get_settings().ciphers_list());
       return false;
     }
   }
 
   if (get_settings().ca_cert_path().empty()) {
-    LOGGER_WARN(logger_, "Setting up empty CA certificate location");
+    SDL_WARN( "Setting up empty CA certificate location");
   }
 
-  LOGGER_DEBUG(logger_, "Setting up CA certificate location");
+  SDL_DEBUG( "Setting up CA certificate location");
   const int result = SSL_CTX_load_verify_locations(
       context_, NULL, get_settings().ca_cert_path().c_str());
 
   if (!result) {
     const unsigned long error = ERR_get_error();
     UNUSED(error);
-    LOGGER_WARN(logger_,
+    SDL_WARN(
                 "Wrong certificate file '"
                     << get_settings().ca_cert_path() << "', err 0x" << std::hex
                     << error << " \"" << ERR_reason_error_string(error) << '"');
@@ -213,16 +213,16 @@ bool CryptoManagerImpl::Init() {
       get_settings().verify_peer()
           ? SSL_VERIFY_PEER | SSL_VERIFY_FAIL_IF_NO_PEER_CERT
           : SSL_VERIFY_NONE;
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Setting up peer verification in mode: " << verify_mode);
   SSL_CTX_set_verify(context_, verify_mode, &debug_callback);
   return true;
 }
 
 bool CryptoManagerImpl::OnCertificateUpdated(const std::string& data) {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   if (!context_) {
-    LOGGER_WARN(logger_, "Not initialized");
+    SDL_WARN( "Not initialized");
     return false;
   }
 
@@ -261,19 +261,19 @@ std::string CryptoManagerImpl::LastError() const {
 }
 
 bool CryptoManagerImpl::IsCertificateUpdateRequired() const {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   const time_t now = time(NULL);
   const time_t cert_date = mktime(&expiration_time_);
 
   if (-1 == cert_date) {
-    LOGGER_ERROR(logger_, "Can't convert certificate date.");
+    SDL_ERROR( "Can't convert certificate date.");
     return true;
   }
 
   const double seconds = difftime(cert_date, now);
-  LOGGER_DEBUG(
-      logger_,
+  SDL_DEBUG(
+      
       "Certificate time: " << asctime(&expiration_time_)
                            << ". Host time: " << asctime(localtime(&now))
                            << ". Seconds before expiration: " << seconds);
@@ -286,7 +286,7 @@ const CryptoManagerSettings& CryptoManagerImpl::get_settings() const {
 
 bool CryptoManagerImpl::set_certificate(const std::string& cert_data) {
   if (cert_data.empty()) {
-    LOGGER_WARN(logger_, "Empty certificate");
+    SDL_WARN( "Empty certificate");
     return false;
   }
 
@@ -299,7 +299,7 @@ bool CryptoManagerImpl::set_certificate(const std::string& cert_data) {
 
   BIO* bio_cert = BIO_new(BIO_s_mem());
   if (NULL == bio_cert) {
-    LOGGER_WARN(logger_, "Unable to update certificate. BIO not created");
+    SDL_WARN( "Unable to update certificate. BIO not created");
     return false;
   }
 
@@ -307,13 +307,13 @@ bool CryptoManagerImpl::set_certificate(const std::string& cert_data) {
   UNUSED(bio_guard)
   int k = 0;
   if ((k = BIO_write(bio_cert, buf, len)) <= 0) {
-    LOGGER_WARN(logger_, "Unable to write into BIO");
+    SDL_WARN( "Unable to write into BIO");
     return false;
   }
 
   PKCS12* p12 = d2i_PKCS12_bio(bio_cert, NULL);
   if (NULL == p12) {
-    LOGGER_ERROR(logger_, "Unable to parse certificate");
+    SDL_ERROR( "Unable to parse certificate");
     return false;
   }
 
@@ -322,23 +322,23 @@ bool CryptoManagerImpl::set_certificate(const std::string& cert_data) {
   PKCS12_parse(p12, NULL, &pkey, &cert, NULL);
 
   if (NULL == cert || NULL == pkey) {
-    LOGGER_WARN(logger_, "Either certificate or key not valid.");
+    SDL_WARN( "Either certificate or key not valid.");
     return false;
   }
 
   if (!SSL_CTX_use_certificate(context_, cert)) {
-    LOGGER_WARN(logger_, "Could not use certificate");
+    SDL_WARN( "Could not use certificate");
     return false;
   }
 
   asn1_time_to_tm(X509_get_notAfter(cert));
 
   if (!SSL_CTX_use_PrivateKey(context_, pkey)) {
-    LOGGER_ERROR(logger_, "Could not use key");
+    SDL_ERROR( "Could not use key");
     return false;
   }
   if (!SSL_CTX_check_private_key(context_)) {
-    LOGGER_ERROR(logger_, "Could not use certificate ");
+    SDL_ERROR( "Could not use certificate ");
     return false;
   }
   return true;

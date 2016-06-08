@@ -18,7 +18,7 @@ class CryptoManagerSettingsImpl : public CryptoManagerSettings {
                                            : security_manager::CLIENT;
   }
   Protocol security_manager_protocol_name() const OVERRIDE {
-    CREATE_LOGGERPTR_LOCAL(logger_, "SecurityManager")
+    CREATE_LOGGERPTR_LOCAL( "SecurityManager")
 
     const std::string& protocol_str = profile_.security_manager_protocol_name();
     if (protocol_str == "TLSv1.0") {
@@ -33,8 +33,8 @@ class CryptoManagerSettingsImpl : public CryptoManagerSettings {
     if (protocol_str == "SSLv3") {
       return security_manager::SSLv3;
     }
-    LOGGER_ERROR(
-        logger_,
+    SDL_ERROR(
+        
         "Unknown protocol: " << profile_.security_manager_protocol_name());
     return static_cast<security_manager::Protocol>(-1);
   }

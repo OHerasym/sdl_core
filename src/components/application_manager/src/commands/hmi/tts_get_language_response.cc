@@ -43,7 +43,7 @@ TTSGetLanguageResponse::TTSGetLanguageResponse(
 TTSGetLanguageResponse::~TTSGetLanguageResponse() {}
 
 void TTSGetLanguageResponse::Run() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   using namespace hmi_apis;
 
   Common_Language::eType language = Common_Language::INVALID_ENUM;
@@ -56,7 +56,7 @@ void TTSGetLanguageResponse::Run() {
 
   application_manager_.hmi_capabilities().set_active_tts_language(language);
 
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Raising event for function_id " << function_id()
                                                 << " and correlation_id "
                                                 << correlation_id());

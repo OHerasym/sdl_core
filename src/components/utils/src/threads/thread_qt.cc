@@ -38,7 +38,7 @@
 
 namespace threads {
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "Utils")
+CREATE_LOGGERPTR_GLOBAL( "Utils")
 
 void sleep(uint32_t ms) {
   QThread::msleep(ms);
@@ -47,14 +47,14 @@ void sleep(uint32_t ms) {
 size_t Thread::kMinStackSize = 0;
 
 void Thread::cleanup(void* arg) {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   Thread* thread = static_cast<Thread*>(arg);
   thread->isThreadRunning_ = false;
   thread->state_cond_.Broadcast();
 }
 
 void* Thread::threadFunc(void* arg) {
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Thread #" << QThread::currentThreadId()
                           << " started successfully");
 
@@ -69,10 +69,10 @@ void* Thread::threadFunc(void* arg) {
   thread->state_cond_.Broadcast();
 
   while (!thread->finalized_) {
-    LOGGER_DEBUG(logger_,
+    SDL_DEBUG(
                  "Thread #" << QThread::currentThreadId() << " iteration");
     thread->run_cond_.Wait(thread->state_lock_);
-    LOGGER_DEBUG(logger_,
+    SDL_DEBUG(
                  "Thread #" << QThread::currentThreadId() << " execute. "
                             << "stopped_ = " << thread->stopped_
                             << "; finalized_ = " << thread->finalized_);
@@ -84,13 +84,13 @@ void* Thread::threadFunc(void* arg) {
       thread->isThreadRunning_ = false;
     }
     thread->state_cond_.Broadcast();
-    LOGGER_DEBUG(logger_,
+    SDL_DEBUG(
                  "Thread #" << QThread::currentThreadId()
                             << " finished iteration");
   }
 
   thread->state_lock_.Release();
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Thread #" << QThread::currentThreadId()
                           << " exited successfully");
   return NULL;
@@ -132,20 +132,20 @@ void Thread::ThreadCancelledExit() {
 }
 
 bool Thread::start(const ThreadOptions& options) {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   sync_primitives::AutoLock auto_lock(state_lock_);
   // 1 - state_lock locked
   //     stopped = 0
   //     running = 0
 
   if (!delegate_) {
-    LOGGER_ERROR(logger_,
+    SDL_ERROR(
                  "Cannot start thread " << name_ << ": delegate is NULL");
     // 0 - state_lock unlocked
   }
 
   if (isThreadRunning_) {
-    LOGGER_TRACE(logger_,
+    SDL_TRACE(
                  "EXIT thread " << name_ << " #" << handle_
                                 << " is already running");
   }
@@ -157,13 +157,13 @@ bool Thread::start(const ThreadOptions& options) {
     // QtConcurrent::run starts execution in QThreadPool and does not return
     // any thread id, so thread id will be set from delegate on its start.
     future_ = QtConcurrent::run(threadFunc, this);
-    LOGGER_DEBUG(logger_, "Created thread: " << name_);
+    SDL_DEBUG( "Created thread: " << name_);
     state_cond_.Wait(auto_lock);
     thread_created_ = true;
   }
   stopped_ = false;
   run_cond_.NotifyOne();
-  LOGGER_DEBUG(logger_, "Thread " << name_ << " #" << handle_ << " started");
+  SDL_DEBUG( "Thread " << name_ << " #" << handle_ << " started");
   return NULL != handle_;
 }
 
@@ -172,12 +172,12 @@ void Thread::yield() {
 }
 
 void Thread::stop() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   sync_primitives::AutoLock auto_lock(state_lock_);
 
   stopped_ = true;
 
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Stopping thread #" << handle_ << " \"" << name_ << " \"");
   if (future_.isCanceled()) {
     cleanup(static_cast<void*>(this));
@@ -187,12 +187,12 @@ void Thread::stop() {
     delegate_->exitThreadMain();
   }
 
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Stopped thread #" << handle_ << " \"" << name_ << " \"");
 }
 
 void Thread::join() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   DCHECK_OR_RETURN_VOID(!IsCurrentThread());
 
   stop();

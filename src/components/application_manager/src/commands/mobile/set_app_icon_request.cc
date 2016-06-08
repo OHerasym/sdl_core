@@ -56,12 +56,12 @@ SetAppIconRequest::SetAppIconRequest(const MessageSharedPtr& message,
 SetAppIconRequest::~SetAppIconRequest() {}
 
 void SetAppIconRequest::Run() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   ApplicationSharedPtr app = application_manager_.application(connection_key());
 
   if (!app) {
-    LOGGER_ERROR(logger_, "Application is not registered");
+    SDL_ERROR( "Application is not registered");
     SendResponse(false, mobile_apis::Result::APPLICATION_NOT_REGISTERED);
     return;
   }
@@ -75,7 +75,7 @@ void SetAppIconRequest::Run() {
       sync_file_name);
 
   if (!file_system::FileExists(full_file_path)) {
-    LOGGER_ERROR(logger_, "No such file " << full_file_path);
+    SDL_ERROR( "No such file " << full_file_path);
     SendResponse(false, mobile_apis::Result::INVALID_DATA);
     return;
   }
@@ -113,14 +113,14 @@ void SetAppIconRequest::CopyToIconStorage(
   if (!application_manager_.protocol_handler()
            .get_settings()
            .enable_protocol_4()) {
-    LOGGER_WARN(logger_,
+    SDL_WARN(
                 "Icon copying skipped, since protocol ver. 4 is not enabled.");
     return;
   }
 
   std::vector<uint8_t> file_content;
   if (!file_system::ReadBinaryFile(path_to_file, file_content)) {
-    LOGGER_ERROR(logger_, "Can't read icon file: " << path_to_file);
+    SDL_ERROR( "Can't read icon file: " << path_to_file);
     return;
   }
 
@@ -131,7 +131,7 @@ void SetAppIconRequest::CopyToIconStorage(
   const uint64_t file_size = file_system::FileSize(path_to_file);
 
   if (storage_max_size < file_size) {
-    LOGGER_ERROR(logger_,
+    SDL_ERROR(
                  "Icon size (" << file_size << ") is bigger, than "
                                                " icons storage maximum size ("
                                << storage_max_size << ")."
@@ -146,7 +146,7 @@ void SetAppIconRequest::CopyToIconStorage(
         application_manager_.get_settings().app_icons_amount_to_remove();
 
     if (!icons_amount) {
-      LOGGER_DEBUG(logger_,
+      SDL_DEBUG(
                    "No icons will be deleted, since amount icons to remove "
                    "is zero. Icon saving skipped.");
       return;
@@ -160,8 +160,8 @@ void SetAppIconRequest::CopyToIconStorage(
       application_manager_.application(connection_key());
 
   if (!app) {
-    LOGGER_ERROR(
-        logger_,
+    SDL_ERROR(
+        
         "Can't get application for connection key: " << connection_key());
     return;
   }
@@ -169,16 +169,16 @@ void SetAppIconRequest::CopyToIconStorage(
   const std::string icon_path =
       file_system::ConcatPath(icon_storage, app->policy_app_id());
   if (!file_system::CreateFile(icon_path)) {
-    LOGGER_ERROR(logger_, "Can't create icon: " << icon_path);
+    SDL_ERROR( "Can't create icon: " << icon_path);
     return;
   }
 
   if (!file_system::Write(icon_path, file_content)) {
-    LOGGER_ERROR(logger_, "Can't write icon: " << icon_path);
+    SDL_ERROR( "Can't write icon: " << icon_path);
     return;
   }
 
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Icon was successfully copied from :" << path_to_file << " to "
                                                      << icon_path);
 
@@ -202,16 +202,16 @@ void SetAppIconRequest::RemoveOldestIcons(const std::string& storage,
 
   for (size_t counter = 0; counter < icons_amount; ++counter) {
     if (!icon_modification_time.size()) {
-      LOGGER_ERROR(logger_, "No more icons left for deletion.");
+      SDL_ERROR( "No more icons left for deletion.");
       return;
     }
     const std::string file_name = icon_modification_time.begin()->second;
     const std::string file_path = file_system::ConcatPath(storage, file_name);
     if (!file_system::DeleteFile(file_path)) {
-      LOGGER_DEBUG(logger_, "Error while deleting icon " << file_path);
+      SDL_DEBUG( "Error while deleting icon " << file_path);
     }
     icon_modification_time.erase(icon_modification_time.begin());
-    LOGGER_DEBUG(logger_,
+    SDL_DEBUG(
                  "Old icon " << file_path << " was deleted successfully.");
   }
 }
@@ -227,7 +227,7 @@ bool SetAppIconRequest::IsEnoughSpaceForIcon(const uint64_t icon_size) const {
 }
 
 void SetAppIconRequest::on_event(const event_engine::Event& event) {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   using namespace helpers;
   const smart_objects::SmartObject& message = event.smart_object();
 
@@ -247,7 +247,7 @@ void SetAppIconRequest::on_event(const event_engine::Event& event) {
             application_manager_.application(connection_key());
 
         if (!message_.valid() || !app.valid()) {
-          LOGGER_ERROR(logger_, "NULL pointer.");
+          SDL_ERROR( "NULL pointer.");
           return;
         }
 
@@ -256,7 +256,7 @@ void SetAppIconRequest::on_event(const event_engine::Event& event) {
                        [strings::value].asString();
         app->set_app_icon_path(path);
 
-        LOGGER_INFO(logger_,
+        SDL_INFO(
                     "Icon path was set to '" << app->app_icon_path() << "'");
       }
 
@@ -264,7 +264,7 @@ void SetAppIconRequest::on_event(const event_engine::Event& event) {
       break;
     }
     default: {
-      LOGGER_ERROR(logger_, "Received unknown event" << event.id());
+      SDL_ERROR( "Received unknown event" << event.id());
       return;
     }
   }

@@ -37,7 +37,7 @@
 namespace application_manager {
 namespace commands {
 
-CREATE_LOGGERPTR_LOCAL(CommandImpl::logger_, "Commands")
+CREATE_LOGGERPTR_LOCAL("Commands")
 
 const int32_t CommandImpl::hmi_protocol_type_ = 1;
 const int32_t CommandImpl::mobile_protocol_type_ = 0;
@@ -100,7 +100,7 @@ void CommandImpl::ReplaceMobileByHMIAppId(
     ApplicationSharedPtr application =
         application_manager_.application(message[strings::app_id].asUInt());
     if (application.valid()) {
-      LOGGER_DEBUG(logger_,
+      SDL_DEBUG(
                    "ReplaceMobileByHMIAppId from "
                        << message[strings::app_id].asInt() << " to "
                        << application->hmi_app_id());
@@ -138,7 +138,7 @@ void CommandImpl::ReplaceHMIByMobileAppId(
             message[strings::app_id].asUInt());
 
     if (application.valid()) {
-      LOGGER_DEBUG(logger_,
+      SDL_DEBUG(
                    "ReplaceHMIByMobileAppId from "
                        << message[strings::app_id].asInt() << " to "
                        << application->app_id());

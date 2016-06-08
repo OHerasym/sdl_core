@@ -44,10 +44,10 @@ SDLGetUserFriendlyMessageRequest::SDLGetUserFriendlyMessageRequest(
 SDLGetUserFriendlyMessageRequest::~SDLGetUserFriendlyMessageRequest() {}
 
 void SDLGetUserFriendlyMessageRequest::Run() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
   const std::string messageCodes = "messageCodes";
   if (!(*message_)[strings::msg_params].keyExists(messageCodes)) {
-    LOGGER_WARN(logger_,
+    SDL_WARN(
                 "Mandatory parameter '" + messageCodes + "'' is missing");
     return;
   }

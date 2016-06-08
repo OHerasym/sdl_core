@@ -48,14 +48,14 @@ ListFilesRequest::ListFilesRequest(const MessageSharedPtr& message,
 ListFilesRequest::~ListFilesRequest() {}
 
 void ListFilesRequest::Run() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   ApplicationSharedPtr application =
       application_manager_.application(connection_key());
 
   if (!application) {
     SendResponse(false, mobile_apis::Result::APPLICATION_NOT_REGISTERED);
-    LOGGER_ERROR(logger_, "Application is not registered");
+    SDL_ERROR( "Application is not registered");
     return;
   }
 
@@ -64,7 +64,7 @@ void ListFilesRequest::Run() {
        application->list_files_in_none_count())) {
     // If application is in the HMI_NONE level the quantity of allowed
     // DeleteFile request is limited by the configuration profile
-    LOGGER_ERROR(logger_,
+    SDL_ERROR(
                  "Too many requests from the app with HMILevel HMI_NONE ");
     SendResponse(false, mobile_apis::Result::REJECTED);
     return;
@@ -84,12 +84,12 @@ void ListFilesRequest::Run() {
     // to write only name file.
     // Plus one required for move to next letter after '/'.
     if (i < application_manager_.get_settings().list_files_response_size()) {
-      LOGGER_DEBUG(logger_,
+      SDL_DEBUG(
                    "File " + filename + " added to ListFiles response");
       (*message_)[strings::msg_params][strings::filenames][i++] =
           file_system::RetrieveFileNameFromPath(it->first);
     } else {
-      LOGGER_DEBUG(logger_,
+      SDL_DEBUG(
                    "File " + filename + " not added to ListFiles response");
     }
   }

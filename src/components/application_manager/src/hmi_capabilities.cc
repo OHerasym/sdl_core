@@ -49,7 +49,7 @@
 namespace application_manager {
 namespace Formatters = NsSmartDeviceLink::NsJSONHandler::Formatters;
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "HMICapabilities")
+CREATE_LOGGERPTR_GLOBAL( "HMICapabilities")
 
 namespace {
 
@@ -721,9 +721,9 @@ void convert_json_languages_to_obj(
 void HMICapabilities::Init(resumption::LastState* last_state) {
   hmi_language_handler_.Init(last_state);
   if (false == load_capabilities_from_file()) {
-    LOGGER_ERROR(logger_, "file hmi_capabilities.json was not loaded");
+    SDL_ERROR( "file hmi_capabilities.json was not loaded");
   } else {
-    LOGGER_INFO(logger_, "file hmi_capabilities.json was loaded");
+    SDL_INFO( "file hmi_capabilities.json was loaded");
   }
   hmi_language_handler_.set_default_capabilities_languages(
       ui_language_, vr_language_, tts_language_);

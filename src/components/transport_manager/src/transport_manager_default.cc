@@ -46,16 +46,16 @@
 #endif  // USB_SUPPORT
 
 namespace transport_manager {
-CREATE_LOGGERPTR_GLOBAL(logger_, "TransportManager")
+CREATE_LOGGERPTR_GLOBAL( "TransportManager")
 
 TransportManagerDefault::TransportManagerDefault(
     const TransportManagerSettings& settings)
     : TransportManagerImpl(settings) {}
 
 int TransportManagerDefault::Init(resumption::LastState& last_state) {
-  LOGGER_TRACE(logger_, "enter");
+  SDL_TRACE( "enter");
   if (E_SUCCESS != TransportManagerImpl::Init(last_state)) {
-    LOGGER_TRACE(logger_,
+    SDL_TRACE(
                  "exit with E_TM_IS_NOT_INITIALIZED. Condition: E_SUCCESS != "
                  "TransportManagerImpl::Init()");
     return E_TM_IS_NOT_INITIALIZED;
@@ -98,7 +98,7 @@ int TransportManagerDefault::Init(resumption::LastState& last_state) {
   ta_usb = NULL;
 #endif  // USB_SUPPORT
 
-  LOGGER_TRACE(logger_, "exit with E_SUCCESS");
+  SDL_TRACE( "exit with E_SUCCESS");
   return E_SUCCESS;
 }
 

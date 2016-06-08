@@ -89,14 +89,14 @@ bool CommandRequestImpl::CleanUp() {
 void CommandRequestImpl::Run() {}
 
 void CommandRequestImpl::onTimeOut() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   unsubscribe_from_all_events();
   {
     // FIXME (dchmerev@luxoft.com): atomic_xchg fits better
     sync_primitives::AutoLock auto_lock(state_lock_);
     if (kCompleted == current_state_) {
-      LOGGER_DEBUG(logger_, "current_state_ = kCompleted");
+      SDL_DEBUG( "current_state_ = kCompleted");
       // don't send timeout if request completed
       return;
     }
@@ -132,7 +132,7 @@ void CommandRequestImpl::SendResponse(
 
   smart_objects::SmartObjectSPtr result = new smart_objects::SmartObject;
   if (!result) {
-    LOGGER_ERROR(logger_, "Memory allocation failed.");
+    SDL_ERROR( "Memory allocation failed.");
     return;
   }
   smart_objects::SmartObject& response = *result;
@@ -178,12 +178,12 @@ void CommandRequestImpl::SendResponse(
 bool CommandRequestImpl::CheckSyntax(const std::string& str,
                                      bool allow_empty_line) {
   if (std::string::npos != str.find_first_of("\t\n")) {
-    LOGGER_ERROR(logger_, "CheckSyntax failed! :" << str);
+    SDL_ERROR( "CheckSyntax failed! :" << str);
     return false;
   }
   if (std::string::npos != str.find("\\n") ||
       std::string::npos != str.find("\\t")) {
-    LOGGER_ERROR(logger_, "CheckSyntax failed! :" << str);
+    SDL_ERROR( "CheckSyntax failed! :" << str);
     return false;
   }
   if (!allow_empty_line) {
@@ -203,7 +203,7 @@ uint32_t CommandRequestImpl::SendHMIRequest(
   const uint32_t hmi_correlation_id =
       application_manager_.GetNextHMICorrelationID();
   if (use_events) {
-    LOGGER_DEBUG(logger_,
+    SDL_DEBUG(
                  "subscribe_on_event " << function_id << " "
                                        << hmi_correlation_id);
     subscribe_on_event(function_id, hmi_correlation_id);
@@ -223,7 +223,7 @@ uint32_t CommandRequestImpl::SendHMIRequest(
   }
 
   if (!application_manager_.ManageHMICommand(result)) {
-    LOGGER_ERROR(logger_, "Unable to send request");
+    SDL_ERROR( "Unable to send request");
     SendResponse(false, mobile_apis::Result::OUT_OF_MEMORY);
   }
   return hmi_correlation_id;
@@ -234,7 +234,7 @@ void CommandRequestImpl::CreateHMINotification(
     const NsSmart::SmartObject& msg_params) const {
   smart_objects::SmartObjectSPtr result = new smart_objects::SmartObject;
   if (!result) {
-    LOGGER_ERROR(logger_, "Memory allocation failed.");
+    SDL_ERROR( "Memory allocation failed.");
     return;
   }
   smart_objects::SmartObject& notify = *result;
@@ -249,7 +249,7 @@ void CommandRequestImpl::CreateHMINotification(
   notify[strings::msg_params] = msg_params;
 
   if (!application_manager_.ManageHMICommand(result)) {
-    LOGGER_ERROR(logger_, "Unable to send HMI notification");
+    SDL_ERROR( "Unable to send HMI notification");
   }
 }
 
@@ -358,7 +358,7 @@ mobile_apis::Result::eType CommandRequestImpl::GetMobileResultCode(
       break;
     }
     default: {
-      LOGGER_ERROR(logger_, "Unknown HMI result code " << hmi_code);
+      SDL_ERROR( "Unknown HMI result code " << hmi_code);
       break;
     }
   }
@@ -367,7 +367,7 @@ mobile_apis::Result::eType CommandRequestImpl::GetMobileResultCode(
 }
 
 bool CommandRequestImpl::CheckAllowedParameters() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   // RegisterAppInterface should always be allowed
   if (mobile_apis::FunctionID::RegisterAppInterfaceID ==
@@ -391,7 +391,7 @@ bool CommandRequestImpl::CheckAllowedParameters() {
 
         for (; iter != iter_end; ++iter) {
           if (true == iter->second.asBool()) {
-            LOGGER_DEBUG(logger_, "Request's param: " << iter->first);
+            SDL_DEBUG( "Request's param: " << iter->first);
             params.push_back(iter->first);
           }
         }
@@ -433,7 +433,7 @@ bool CommandRequestImpl::CheckAllowedParameters() {
 }
 
 void CommandRequestImpl::RemoveDisallowedParameters() {
-  LOGGER_AUTO_TRACE(logger_);
+  SDL_AUTO_TRACE();
 
   smart_objects::SmartObject& params = (*message_)[strings::msg_params];
 
@@ -447,8 +447,8 @@ void CommandRequestImpl::RemoveDisallowedParameters() {
       params.erase(*it_disallowed);
       removed_parameters_permissions_.disallowed_params.push_back(
           *it_disallowed);
-      LOGGER_INFO(
-          logger_,
+      SDL_INFO(
+          
           "Following parameter is disallowed by user: " << *it_disallowed);
     }
   }
@@ -462,8 +462,8 @@ void CommandRequestImpl::RemoveDisallowedParameters() {
     if (params.keyExists(*it_undefined)) {
       params.erase(*it_undefined);
       removed_parameters_permissions_.undefined_params.push_back(*it_undefined);
-      LOGGER_INFO(
-          logger_,
+      SDL_INFO(
+          
           "Following parameter is disallowed by policy: " << *it_undefined);
     }
   }
@@ -483,7 +483,7 @@ void CommandRequestImpl::RemoveDisallowedParameters() {
                       key)) {
       params.erase(key);
       removed_parameters_permissions_.undefined_params.push_back(key);
-      LOGGER_INFO(logger_,
+      SDL_INFO(
                   "Following parameter is not found among allowed parameters '"
                       << key << "' and will be treated as disallowed.");
     }

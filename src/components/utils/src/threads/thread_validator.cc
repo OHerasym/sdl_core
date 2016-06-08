@@ -36,7 +36,7 @@
 
 namespace threads {
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "Utils")
+CREATE_LOGGERPTR_GLOBAL( "Utils")
 
 SingleThreadSimpleValidator::SingleThreadSimpleValidator()
     : creation_thread_id_(Thread::CurrentId()) {}
@@ -46,7 +46,7 @@ SingleThreadSimpleValidator::~SingleThreadSimpleValidator() {}
 void SingleThreadSimpleValidator::AssertRunningOnCreationThread() const {
   uint64_t current_id = Thread::CurrentId();
   if (creation_thread_id_ != current_id) {
-    LOGGER_ERROR(logger_,
+    SDL_ERROR(
                  "Single-threaded object created at thread "
                      << creation_thread_id_ << " is accessed from thread "
                      << current_id);
@@ -69,7 +69,7 @@ void SingleThreadValidator::PassToThread(uint64_t thread_id) const {
 void SingleThreadValidator::AssertRunningOnValidThread() const {
   uint64_t current_id = Thread::CurrentId();
   if (owning_thread_id_ != current_id) {
-    LOGGER_ERROR(logger_,
+    SDL_ERROR(
                  "Single-threaded object owned by thread "
                      << owning_thread_id_ << " is accessed from thread "
                      << current_id << "\n");

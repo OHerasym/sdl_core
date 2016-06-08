@@ -43,7 +43,7 @@
  */
 namespace connection_handler {
 
-CREATE_LOGGERPTR_GLOBAL(logger_, "ConnectionHandler")
+CREATE_LOGGERPTR_GLOBAL( "ConnectionHandler")
 
 Device::Device(DeviceHandle device_handle,
                const std::string& user_friendly_name,
@@ -54,7 +54,7 @@ Device::Device(DeviceHandle device_handle,
     , mac_address_(mac_address)
     , connection_type_(connection_type) {
   mac_address_ = encryption::MakeHash(mac_address);
-  LOGGER_DEBUG(logger_,
+  SDL_DEBUG(
                "Device: MAC address - " << mac_address << ", hash - "
                                         << mac_address_);
 }
