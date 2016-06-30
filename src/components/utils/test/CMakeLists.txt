@@ -56,7 +56,6 @@ set(testSources
   singleton_test.cc
   #posix_thread_test.cc
   stl_utils_test.cc
-  rwlock_posix_test.cc
   async_runner_test.cc
   shared_ptr_test.cc
   scope_guard_test.cc
@@ -64,7 +63,26 @@ set(testSources
   message_loop_thread_test.cc
   custom_string_test.cc
   timer_test.cc
+  lock_test.cc
+  thread_test.cc
+  rwlock_test.cc
 )
+
+if (ENABLE_LOG)
+  list(APPEND testSources auto_trace_test.cc)
+endif()
+
+if (BUILD_BACKTRACE_SUPPORT)
+  list(APPEND testSources back_trace_test.cc)
+endif()
+
+if (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  list (APPEND testSources
+    system_test.cc
+    resource_usage_test.cc
+  )
+
+endif()
 
 set(testLibraries
   gmock
